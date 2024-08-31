@@ -1,28 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
 import "./RightMainPanel.css";
 import TreeMap from './TreeMap';
+import EnclosureDisplay from './EnclosureDisplay';
 
 const RightMainPanel = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const mainDisplayRef = useRef(null);
 
   const data = {
     name: "root",
     children: [
-      { name: "A", value: 100, category: 1 },
-      { name: "B", value: 300, category: 2 },
-      { name: "C", value: 50, category: 3 },
-      { name: "D", value: 200, category: 4 },
-      { name: "D", value: 200, category: 4 },
-      { name: "D", value: 200, category: 4 },
-      { name: "D", value: 200, category: 4 },
-      { name: "D", value: 200, category: 4 },
-      { name: "D", value: 200, category: 4 },
+      { name: "Documents", value: 30, category: 1 },
+      { name: "Pictures", value: 25, category: 2 },
       {
-        name: "E", category: 5, children: [
-          { name: "E1", value: 100, category: 5 },
-          { name: "E2", value: 150, category: 5 }
+        name: "Music", value: 20, category: 3, children: [
+          { name: "Rock", value: 10, category: 3 },
+          { name: "Jazz", value: 5, category: 3 },
+          { name: "Pop", value: 5, category: 3 }
+        ]
+      },
+      { name: "Videos", value: 15, category: 4 },
+      { name: "Downloads", value: 4, category: 5 },
+      {
+        name: "Projects", category: 6, children: [
+          { name: "Project1", value: 6, category: 6 },
+          { name: "Project2", value: 4, category: 6 }
         ]
       }
     ]
@@ -52,22 +53,6 @@ const RightMainPanel = () => {
     setActiveIndex(index);
   };
 
-  useEffect(() => {
-    const updateDimensions = () => {
-      if (mainDisplayRef.current) {
-        const { width, height } = mainDisplayRef.current.getBoundingClientRect();
-        setDimensions({ width, height });
-      }
-    };
-
-    updateDimensions();
-
-    window.addEventListener("resize", updateDimensions);
-
-    // Cleanup event listener on component unmount
-    return () => window.removeEventListener("resize", updateDimensions);
-  }, []);
-
   return (
     <div className='RightMain'>
       <div className='top'>
@@ -78,10 +63,10 @@ const RightMainPanel = () => {
           {svgs}
         </div>
       </div>
-      <div className='bottom' id='Main-Display-Content' ref={mainDisplayRef}>
-        {dimensions.width > 0 && dimensions.height > 0 && (
-          <TreeMap data={data} width={dimensions.width} height={dimensions.height} />
-        )}
+      <div className='bottom' id='Main-Display-Content'>
+        <div className='wrap'>
+          <TreeMap data={data} width={900} height={653} />
+          </div>
       </div>
     </div>
   );

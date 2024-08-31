@@ -30,3 +30,13 @@
     padding: 2px;
     background-color: var(--30-color);
 }
+
+
+#Main-Display-Content {
+    overflow: hidden;
+    padding: 5px;
+}
+
+.wrap {
+    background-color: aqua;
+}

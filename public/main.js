@@ -6,6 +6,7 @@ function createWindow() {
     const win = new BrowserWindow({
         width: 1400,
         height: 800,
+        resizable: false,
         webPreferences: {
             enableRemoteModule: true
         }

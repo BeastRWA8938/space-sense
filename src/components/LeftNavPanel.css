@@ -32,6 +32,8 @@ svg {
     flex: 0.935;
 }
 
+
+
 .from-start {
     display: flex;
     flex-direction: column;
