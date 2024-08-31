@@ -1,0 +1,40 @@
+:root {
+    --60-color: #f2f2f2;
+    --30-color: #ff8098;
+    --10-color: #FFA6B7; 
+    --normal-color: #f2f2f2;
+}
+
+@font-face {
+    font-family: "JetBrains";
+    src: url("./fonts/JetBrains_Mono/static/JetBrainsMono-Regular.ttf") format('truetype');
+}
+
+*{
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-image: var(--60-color);
+    color: var(--normal-color);
+    font-family: "JetBrains";
+}
+
+div {
+    border-radius: 3px;
+}
+
+.App {
+    background-color: var(--60-color);
+    padding: 10px;
+    height: 97vh;
+}
+
+.Main {
+    background-color: var(--60-color);
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+    width: 100%;
+}

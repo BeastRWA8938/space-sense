@@ -1,13 +1,14 @@
 import './App.css';
+import LeftNavPanel from './components/LeftNavPanel';
+import RightMainPanel from './components/RightMainPanel';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <p>
-          Hi am i space sense
-        </p>
-      </header>
+      <div className='Main'>
+        <LeftNavPanel/>
+        <RightMainPanel/>
+      </div>
     </div>
   );
 }

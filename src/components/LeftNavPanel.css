@@ -1,0 +1,33 @@
+.LeftNavMain {
+    background-color: var(--60-color);
+    flex: 0.15;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+svg {
+    margin: 0;
+    padding: 0;
+    height: 70%;
+}
+
+.tool-name {
+    font-style: bold;
+}
+
+.top {
+    background-color: var(--30-color);
+    flex: 0.05;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    /* gap: 10px; */
+    padding: 1px;
+}
+
+
+.bottom {
+    background-color: var(--30-color);
+    flex: 0.935;
+}
