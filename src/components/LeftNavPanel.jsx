@@ -13,8 +13,11 @@ const LeftNavPanel = () => {
             </svg>
             <p className='tool-name'>Space Sense</p>
         </div>
-        <div className='bottom'>
-            Scans
+        <div className='bottom from-start'>
+            <div className='buttons'>
+              <div className='button-div'>Full Disk Scan</div>
+              <div className='button-div'>Folder Scan</div>
+            </div>
         </div>
     </div>
   )

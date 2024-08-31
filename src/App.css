@@ -1,13 +1,24 @@
 :root {
     --60-color: #f2f2f2;
     --30-color: #ff8098;
-    --10-color: #FFA6B7; 
+    --10-color: #FFA6B7;
+    --accent-color: #FFBFCB;
     --normal-color: #f2f2f2;
 }
 
 @font-face {
-    font-family: "JetBrains";
+    font-family: "JetBrainsRegular";
     src: url("./fonts/JetBrains_Mono/static/JetBrainsMono-Regular.ttf") format('truetype');
+}
+
+@font-face {
+    font-family: "JetBrainsBold";
+    src: url("./fonts/JetBrains_Mono/static/JetBrainsMono-Bold.ttf");
+}
+
+@font-face {
+    font-family: "JetBrainsExtraBold";
+    src: url("./fonts/JetBrains_Mono/static/JetBrainsMono-ExtraBold.ttf") format("truetype");
 }
 
 *{
@@ -18,7 +29,7 @@
 body {
     background-image: var(--60-color);
     color: var(--normal-color);
-    font-family: "JetBrains";
+    font-family: "JetBrainsRegular";
 }
 
 div {
