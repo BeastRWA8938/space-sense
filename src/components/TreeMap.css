@@ -1,0 +1,19 @@
+.treemap-node {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--10-color);
+    box-sizing: border-box;
+    border: 1px solid var(--60-color);
+  }
+  
+  .treemap-content {
+    padding: 4px;
+    font-size: 12px;
+    color: var(--60-color);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  

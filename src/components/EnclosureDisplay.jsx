@@ -1,15 +1,17 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
+import './EnclosureDisplay.css'; // Make sure to import the CSS file
 
 const EnclosureDisplay = ({ data, width, height }) => {
-  const svgRef = useRef();
+  const divRef = useRef();
 
   useEffect(() => {
     if (!data) return;
 
-    const svg = d3.select(svgRef.current)
-      .attr('width', width)
-      .attr('height', height);
+    const container = d3.select(divRef.current)
+      .style('position', 'relative')
+      .style('width', `${width}px`)
+      .style('height', `${height}px`);
 
     const pack = d3.pack()
       .size([width, height])
@@ -20,29 +22,23 @@ const EnclosureDisplay = ({ data, width, height }) => {
 
     const nodes = pack(root).descendants();
 
-    svg.selectAll('circle')
-      .data(nodes)
-      .join('circle')
-      .attr('cx', d => d.x)
-      .attr('cy', d => d.y)
-      .attr('r', d => d.r)
-      .attr('fill', d => d.children ? '#bbb' : '#69b3a2')
-      .attr('stroke', '#000')
-      .attr('stroke-width', 1);
+    // Remove any existing nodes
+    container.selectAll('div').remove();
 
-    svg.selectAll('text')
+    // Create divs for each node with a className
+    container.selectAll('div')
       .data(nodes)
-      .join('text')
-      .attr('x', d => d.x)
-      .attr('y', d => d.y)
-      .attr('dy', '0.3em')
-      .attr('text-anchor', 'middle')
-      .text(d => d.children ? '' : d.data.name)
-      .attr('font-size', d => `${Math.min(2 * d.r, (2 * d.r - 8) / d.data.name.length)}px`)
-      .attr('fill', '#fff');
+      .enter()
+      .append('div')
+      .attr('class', d => d.children ? 'node parent-node' : 'node child-node')
+      .style('left', d => `${d.x - d.r}px`)
+      .style('top', d => `${d.y - d.r}px`)
+      .style('width', d => `${2 * d.r}px`)
+      .style('height', d => `${2 * d.r}px`)
+      .text(d => d.children ? '' : d.data.name);
   }, [data, width, height]);
 
-  return <svg ref={svgRef}></svg>;
+  return <div ref={divRef} />;
 };
 
 export default EnclosureDisplay;

@@ -9,21 +9,21 @@ const RightMainPanel = () => {
   const data = {
     name: "root",
     children: [
-      { name: "Documents", value: 30, category: 1 },
       { name: "Pictures", value: 25, category: 2 },
       {
-        name: "Music", value: 20, category: 3, children: [
-          { name: "Rock", value: 10, category: 3 },
-          { name: "Jazz", value: 5, category: 3 },
-          { name: "Pop", value: 5, category: 3 }
+        name: "Music", value: 20, totalsize: 10, category: 3, children: [
+          { name: "Rock", value: 10, totalsize: 10, category: 3 },
+          { name: "Jazz", value: 5, totalsize: 10, category: 3 },
+          { name: "Pop", value: 5, totalsize: 10, category: 3 }
         ]
       },
-      { name: "Videos", value: 15, category: 4 },
-      { name: "Downloads", value: 4, category: 5 },
+      { name: "Videos", value: 15, totalsize: 10, category: 4 },
+      { name: "Downloads", value: 4, totalsize: 10, category: 5 },
+      { name: "Documents", value: 30, totalsize: 10, category: 1 },
       {
-        name: "Projects", category: 6, children: [
-          { name: "Project1", value: 6, category: 6 },
-          { name: "Project2", value: 4, category: 6 }
+        name: "Projects", category: 6, totalsize: 10, children: [
+          { name: "Project1", value: 6, totalsize: 10, category: 6 },
+          { name: "Project2", value: 4, totalsize: 10, category: 6 }
         ]
       }
     ]
@@ -64,9 +64,13 @@ const RightMainPanel = () => {
         </div>
       </div>
       <div className='bottom' id='Main-Display-Content'>
-        <div className='wrap'>
-          <TreeMap data={data} width={900} height={653} />
-          </div>
+        {activeIndex === 0 ? (
+          <EnclosureDisplay data={data} width={1135} height={653} />
+        ) : activeIndex === 1 ? (
+          <div>List</div>
+        ) : activeIndex === 2 ? (
+          <TreeMap data={data} width={1135} height={653} />
+        ) : null}
       </div>
     </div>
   );

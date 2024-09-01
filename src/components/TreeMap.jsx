@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
+import './TreeMap.css'; // Make sure to import the CSS file
 
 const TreeMap = ({ data, width, height }) => {
   const ref = useRef();
@@ -19,34 +20,24 @@ const TreeMap = ({ data, width, height }) => {
     // Create the treemap layout
     d3.treemap()
       .size([width, height])
-      .padding(3)(root);
+      .padding(1)(root);
 
     // Remove any existing nodes
     container.selectAll("div").remove();
 
-    // Create divs for each node
+    // Create divs for each node with a className
     container.selectAll("div")
       .data(root.leaves())
       .enter()
       .append("div")
-      .style("position", "absolute")
+      .attr("class", "treemap-node")
       .style("left", d => `${d.x0}px`)
       .style("top", d => `${d.y0}px`)
       .style("width", d => `${d.x1 - d.x0}px`)
       .style("height", d => `${d.y1 - d.y0}px`)
-      .style("background-color", d => d3.schemeCategory10[d.data.category % 10])
-      .style("box-sizing", "border-box")
-      .style("border", "1px solid white")
       .append("div")
-      .style("padding", "4px")
-      .style("font-size", "12px")
-      .style("text-align", "center")
-      .style("color", "white")
-      .style("overflow", "hidden")
-      .style("white-space", "nowrap")
-      .style("text-overflow", "ellipsis")
-      .text(d => d.data.name);
-
+      .attr("class", "treemap-content")
+      .html(d => `${d.data.name}<br>Size: ${d.data.totalsize}`);
   }, [data, width, height]);
 
   return <div ref={ref} />;

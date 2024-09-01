@@ -1,0 +1,22 @@
+.node {
+    position: absolute;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px; /* This will be overridden in JS based on size */
+    color: #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border: 1px solid var(--60-color);
+  }
+  
+  .parent-node {
+    background-color: var(--accent-color);
+  }
+  
+  .child-node {
+    background-color: var(--10-color);
+  }
+  
