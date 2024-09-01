@@ -1,13 +1,20 @@
 import './App.css';
 import LeftNavPanel from './components/LeftNavPanel';
 import RightMainPanel from './components/RightMainPanel';
+import {  DarkModeProvider } from './components/DarkModeProvider.jsx';
+import { ScanModeProvider } from './components/ScanModeProvider.jsx';
+
 
 function App() {
   return (
     <div className="App">
       <div className='Main'>
-        <LeftNavPanel/>
-        <RightMainPanel/>
+      <DarkModeProvider>
+        <ScanModeProvider>
+          <LeftNavPanel/>
+          <RightMainPanel/>
+        </ScanModeProvider>
+      </DarkModeProvider>
       </div>
     </div>
   );

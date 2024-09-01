@@ -30,6 +30,7 @@ svg {
 .bottom {
     background-color: var(--30-color);
     flex: 0.935;
+    color: var(--normal-color);
 }
 
 .glimps{
@@ -60,11 +61,15 @@ svg {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--60-color);
+    color: var(--normal-color);
     font-family: "JetBrainsBold";
     background-color: var(--10-color);
     width: 100%;
     height: 35%;
+}
+
+.width-max {
+    width: 100%;
 }
 
 .button-div:hover, .active-scan {

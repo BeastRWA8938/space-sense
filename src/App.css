@@ -1,8 +1,16 @@
-:root {
+.dark-mode {
+    --60-color: #595959;
+    --30-color: #404040;
+    --10-color: #595959;
+    --accent-color: #808080;
+    --normal-color: #f2f2f2;
+}
+
+.light-mode {
     --60-color: #f2f2f2;
     --30-color: #ff8098;
     --10-color: #FFA6B7;
-    --accent-color: #FFBFCB;
+    --accent-color: #fcb6c3;
     --normal-color: #f2f2f2;
 }
 

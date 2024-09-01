@@ -9,7 +9,7 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    border: 1px solid var(--60-color);
+    border: 1px solid var(--normal-color);
   }
   
   .parent-node {

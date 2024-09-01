@@ -1,0 +1,29 @@
+.fullscan-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    width: fit-content;
+}
+
+.justify-start {
+    justify-content: start;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.title {
+    font-family: "JetBrainsBold";
+    font-size: 32px;
+}
+
+.width-fit {
+    width: fit-content;
+}
+
+.pad5 {
+    padding: 5px;
+}

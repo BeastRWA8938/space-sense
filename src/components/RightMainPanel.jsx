@@ -1,33 +1,51 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import "./RightMainPanel.css";
 import TreeMap from './TreeMap';
 import EnclosureDisplay from './EnclosureDisplay';
+import { ScanModeContext } from './ScanModeProvider';
+import FullScan from './FullScan';
+import FolderScan from './FolderScan';
 
 const RightMainPanel = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const { isScanMode, data, setData } = useContext(ScanModeContext);
 
-  const data = {
-    name: "root",
-    children: [
-      { name: "Pictures", value: 25, category: 2 },
-      {
-        name: "Music", value: 20, totalsize: 10, category: 3, children: [
-          { name: "Rock", value: 10, totalsize: 10, category: 3 },
-          { name: "Jazz", value: 5, totalsize: 10, category: 3 },
-          { name: "Pop", value: 5, totalsize: 10, category: 3 }
+  let scanComponent;
+  if (isScanMode === 0) {
+    scanComponent = <FullScan />;
+  } else if (isScanMode === 1) {
+    scanComponent = <FolderScan />;
+  }
+
+  useEffect(() => {
+    // Example to simulate data loading after a scan
+    if (data === null && isScanMode !== null) {
+      let loadedData = {
+        name: "root",
+        children: [
+          { name: "Pictures", value: 25, category: 2 },
+          {
+            name: "Music", value: 20, totalsize: 10, category: 3, children: [
+              { name: "Rock", value: 10, totalsize: 10, category: 3 },
+              { name: "Jazz", value: 5, totalsize: 10, category: 3 },
+              { name: "Pop", value: 5, totalsize: 10, category: 3 }
+            ]
+          },
+          { name: "Videos", value: 15, totalsize: 10, category: 4 },
+          { name: "Downloads", value: 4, totalsize: 10, category: 5 },
+          { name: "Documents", value: 30, totalsize: 10, category: 1 },
+          {
+            name: "Projects", category: 6, totalsize: 10, children: [
+              { name: "Project1", value: 6, totalsize: 10, category: 6 },
+              { name: "Project2", value: 4, totalsize: 10, category: 6 }
+            ]
+          }
         ]
-      },
-      { name: "Videos", value: 15, totalsize: 10, category: 4 },
-      { name: "Downloads", value: 4, totalsize: 10, category: 5 },
-      { name: "Documents", value: 30, totalsize: 10, category: 1 },
-      {
-        name: "Projects", category: 6, totalsize: 10, children: [
-          { name: "Project1", value: 6, totalsize: 10, category: 6 },
-          { name: "Project2", value: 4, totalsize: 10, category: 6 }
-        ]
-      }
-    ]
-  };
+      };
+      loadedData = null;
+      setData(loadedData); // Simulate loading the data after a scan
+    }
+  }, [isScanMode, data, setData]);
 
   const svgs = [
     <svg key={0} className={activeIndex === 0 ? "active-view" : ""} width="33" height="34" viewBox="0 0 33 34" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => handleSvgClick(0)}>
@@ -56,24 +74,24 @@ const RightMainPanel = () => {
   return (
     <div className='RightMain'>
       <div className='top'>
-        <div className='top-left'>
-          Path
-        </div>
-        <div className='top-right bg-10'>
-          {svgs}
-        </div>
+        <div className='top-left'>Path</div>
+        <div className='top-right bg-10'>{svgs}</div>
       </div>
       <div className='bottom' id='Main-Display-Content'>
-        {activeIndex === 0 ? (
-          <EnclosureDisplay data={data} width={1135} height={653} />
-        ) : activeIndex === 1 ? (
-          <div>List</div>
-        ) : activeIndex === 2 ? (
-          <TreeMap data={data} width={1135} height={653} />
-        ) : null}
+        {data === null ? (
+          isScanMode === 0 ? <FullScan /> : isScanMode === 1 ? <FolderScan /> : null
+        ) : (
+          activeIndex === 0 ? (
+            <EnclosureDisplay data={data} width={1135} height={653} />
+          ) : activeIndex === 1 ? (
+            <div>List</div>
+          ) : activeIndex === 2 ? (
+            <TreeMap data={data} width={1135} height={653} />
+          ) : null
+        )}
       </div>
     </div>
   );
-}
+};
 
 export default RightMainPanel;
