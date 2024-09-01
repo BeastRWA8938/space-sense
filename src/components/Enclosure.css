@@ -1,0 +1,12 @@
+.enclosure-node {
+    position: absolute;
+    background-color: #69b3a2;
+    overflow: hidden;
+  }
+  
+  .enclosure-content {
+    text-align: center;
+    color: white;
+    font-size: 12px;
+  }
+  
