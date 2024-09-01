@@ -32,7 +32,11 @@ svg {
     flex: 0.935;
 }
 
-
+.glimps{
+    border-radius: 2px;
+    padding: 2px;
+    background-color: var(--10-color);
+}
 
 .from-start {
     display: flex;
@@ -66,4 +70,12 @@ svg {
 .button-div:hover, .active-scan {
     border: 2px solid;
     border-color: var(--accent-color);  
+}
+
+.bottom-features {
+    flex: 0.15;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 30px;
 }

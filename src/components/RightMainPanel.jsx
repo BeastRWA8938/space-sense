@@ -59,7 +59,7 @@ const RightMainPanel = () => {
         <div className='top-left'>
           Path
         </div>
-        <div className='top-right'>
+        <div className='top-right bg-10'>
           {svgs}
         </div>
       </div>

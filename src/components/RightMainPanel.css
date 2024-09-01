@@ -7,13 +7,13 @@
 }
 
 .top-right {
-    background-color: var(--10-color);
     flex: 0.15;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     height: 30px;
 }
+
 .top-left {
     background-color: var(--10-color);
     flex: 0.8;

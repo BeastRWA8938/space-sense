@@ -49,3 +49,15 @@ div {
     height: 100%;
     width: 100%;
 }
+
+.bg-10 {
+    background-color: var(--10-color);
+}
+
+.bg-30 {
+    background-color: var(--30-color);
+}
+
+.bg-60 {
+    background-color: var(--60-color);
+}
