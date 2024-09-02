@@ -1,43 +1,60 @@
-// src/FileExplorer.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const FileExplorer = () => {
-  const [directory, setDirectory] = useState(null);
+function FileExplorer() {
+  const [currentPath, setCurrentPath] = useState('');
   const [files, setFiles] = useState([]);
 
-  const openDirectory = async () => {
-    const dirPath = await window.electron.openDirectory();
-    if (dirPath) {
-      const fs = window.require('fs');
-      const path = window.require('path');
-
-      fs.readdir(dirPath, (err, files) => {
-        if (err) {
-          console.error('Could not list the directory.', err);
-          return;
+  useEffect(() => {
+    window.electronAPI.getInitialDirectory()
+      .then((result) => {
+        console.log('Result from getInitialDirectory:', result);
+        if (result && result.path && Array.isArray(result.files)) {
+          setCurrentPath(result.path);
+          setFiles(result.files);
+        } else {
+          console.error('Unexpected result format:', result);
         }
-        setDirectory(dirPath);
-        setFiles(files.map(file => ({
-          name: file,
-          isDirectory: fs.lstatSync(path.join(dirPath, file)).isDirectory(),
-        })));
+      })
+      .catch((err) => {
+        console.error('Error fetching initial directory:', err);
       });
+  }, []);
+
+  const navigateToDirectory = (file) => {
+    if (file.isDirectory) {
+      const newPath = `${currentPath}\\${file.name}`;
+      window.electronAPI.navigateDirectory(newPath)
+        .then((result) => {
+          console.log('Result from navigateDirectory:', result);
+          if (result && result.path && Array.isArray(result.files)) {
+            setCurrentPath(result.path);
+            setFiles(result.files);
+          } else {
+            console.error('Unexpected result format:', result);
+          }
+        })
+        .catch((err) => {
+          console.error('Error navigating directory:', err);
+        });
     }
   };
 
   return (
     <div>
-      <button onClick={openDirectory}>Open Directory</button>
-      <h3>Directory: {directory}</h3>
+      <h2>Current Path: {currentPath}</h2>
       <ul>
-        {files.map((file, index) => (
-          <li key={index}>
-            {file.name} {file.isDirectory ? '(Directory)' : ''}
-          </li>
-        ))}
+        {files.length === 0 ? (
+          <li>No files or directories found.</li>
+        ) : (
+          files.map((file, index) => (
+            <li key={index} onClick={() => navigateToDirectory(file)}>
+              <strong>{file.name}</strong> - {file.isDirectory ? 'Directory' : 'File'} - {file.size} bytes
+            </li>
+          ))
+        )}
       </ul>
     </div>
   );
-};
+}
 
 export default FileExplorer;

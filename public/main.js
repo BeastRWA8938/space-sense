@@ -33,45 +33,54 @@ function createWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
-      nodeIntegration: true,
+      nodeIntegration: true, // Ensure nodeIntegration is false for security
+      sandbox: true, // Optional: Adds additional security by running the renderer in a sandbox
     },
   });
 
   mainWindow.loadURL("http://localhost:3000");
-  console.log("start");
+  console.log("Electron window created and loaded URL");
 }
 
-app.whenReady().then(createWindow);
+// Initialize the application
+app.whenReady().then(() => {
+  createWindow();
 
+  // Recreate the window if all windows are closed and the app is activated (macOS specific)
+  app.on("activate", () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
+});
+
+// Handle window close event (non-macOS specific)
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   }
 });
 
-app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+// IPC handlers
+ipcMain.handle("directory:getInitial", async () => {
+  const initialPath = 'C:\\'; // Change this to your preferred starting path
+  try {
+    const files = await getDirectoryContents(initialPath);
+    console.log('Initial directory contents:', { path: initialPath, files });
+    return { path: initialPath, files };
+  } catch (error) {
+    console.error("Error getting initial directory:", error);
+    return { path: "", files: [] };
   }
 });
 
-// IPC handler to open a directory
-ipcMain.handle("dialog:openDirectory", async () => {
+ipcMain.handle("directory:navigate", async (event, dirPath) => {
   try {
-    const result = await dialog.showOpenDialog({
-      properties: ["openDirectory"],
-    });
-
-    if (result.canceled || result.filePaths.length === 0) {
-      return { path: "", files: [] };
-    }
-
-    const dirPath = result.filePaths[0];
     const files = await getDirectoryContents(dirPath);
-
+    console.log('Navigated directory contents:', { path: dirPath, files });
     return { path: dirPath, files };
   } catch (error) {
-    console.error("Error handling directory request:", error);
+    console.error("Error navigating directory:", error);
     return { path: "", files: [] };
   }
 });
