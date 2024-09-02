@@ -9,6 +9,7 @@ function createWindow() {
         width: 1400,
         height: 800,
         resizable: false,
+        icon: path.join(__dirname + '/SpaceSenseLogo.ico'),
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'), // Path to preload script
             enableRemoteModule: false,

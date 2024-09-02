@@ -16,7 +16,7 @@
 
 .top-left {
     background-color: var(--10-color);
-    flex: 0.8;
+    flex: 0.65;
     height: 30px;
     display: flex;
     align-items: center;

@@ -33,6 +33,12 @@ svg {
     color: var(--normal-color);
 }
 
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .glimps{
     border-radius: 2px;
     padding: 2px;
@@ -67,6 +73,7 @@ svg {
     width: 100%;
     height: 35%;
 }
+
 
 .width-max {
     width: 100%;

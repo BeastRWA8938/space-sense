@@ -9,22 +9,18 @@ const LeftNavPanel = () => {
     const [activeIndex, setActiveIndex] = useState(null);
 
     const handleFullScanClick = () => {
-      setIsScanMode(0); // Set to Full Scan mode
-      setData(null);    // Reset the data
+      setIsScanMode(0);
+      setData(null);
     };
 
     const handleFolderScanClick = () => {
-      setIsScanMode(1); // Set to Folder Scan mode
-      setData(null);    // Reset the data
+      setIsScanMode(1);
+      setData(null); 
     };
 
     const handleMode = () => {
         setIsDarkMode(!isDarkMode);
     };
-
-    const handleScanMode = (mode) => {
-      setIsScanMode(mode);
-    }
 
     const handleSvgClick = (index) => {
         setActiveIndex(index);

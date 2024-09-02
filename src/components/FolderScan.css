@@ -1,0 +1,20 @@
+.FolderScan-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.handelPath {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.path-bg {
+    background-color: var(--10-color);
+    height: 1rem;
+    padding: 10px;
+}
