@@ -3,7 +3,9 @@ import React from 'react'
 const Loading = () => {
   return (
     <div>
-      Loading...
+      <video id='videoLoop' autoPlay loop muted>
+      <source id="animation" src="./loading.webm" type="video/webm" />
+      </video>
     </div>
   )
 }
