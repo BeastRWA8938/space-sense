@@ -5,16 +5,18 @@ import { ScanModeContext } from './ScanModeProvider';
 
 const LeftNavPanel = () => {
     const { isDarkMode, setIsDarkMode } = useContext(DarkModeContext);
-    const { setData , setIsScanMode } = useContext(ScanModeContext);
+    const { setData , setIsScanMode, setLoading } = useContext(ScanModeContext);
     const [activeIndex, setActiveIndex] = useState(null);
 
     const handleFullScanClick = () => {
       setIsScanMode(0);
+      setLoading(false);
       setData(null);
     };
 
     const handleFolderScanClick = () => {
       setIsScanMode(1);
+      setLoading(false);
       setData(null); 
     };
 
@@ -44,7 +46,7 @@ const LeftNavPanel = () => {
 
     const svgs = [
         <svg key={0} className={activeIndex === 0 ? "glimps" : ""} width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => handleExternalLink(0)}>
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M32.4132 22.9394C29.7718 24.8643 26.5185 26 23 26C14.1634 26 7 18.8366 7 10C7 6.24451 8.29386 2.79123 10.4601 0.0615845C4.31747 2.62384 0 8.68677 0 15.7581C0 25.147 7.61116 32.7581 17 32.7581C23.8226 32.7581 29.7065 28.7391 32.4132 22.9394Z" fill="white"/>
+          <path fillRule="evenodd" clipRule="evenodd" d="M32.4132 22.9394C29.7718 24.8643 26.5185 26 23 26C14.1634 26 7 18.8366 7 10C7 6.24451 8.29386 2.79123 10.4601 0.0615845C4.31747 2.62384 0 8.68677 0 15.7581C0 25.147 7.61116 32.7581 17 32.7581C23.8226 32.7581 29.7065 28.7391 32.4132 22.9394Z" fill="white"/>
         </svg>,
         <svg key={1} className={activeIndex === 1 ? "glimps" : ""} width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => handleExternalLink(1)}>
             <g clipPath="url(#clip0_71_119)">
