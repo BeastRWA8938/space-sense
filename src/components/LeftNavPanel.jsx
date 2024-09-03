@@ -5,19 +5,21 @@ import { ScanModeContext } from './ScanModeProvider';
 
 const LeftNavPanel = () => {
     const { isDarkMode, setIsDarkMode } = useContext(DarkModeContext);
-    const { setData , setIsScanMode, setLoading } = useContext(ScanModeContext);
+    const { setData , setIsScanMode, setLoading, setHomePath } = useContext(ScanModeContext);
     const [activeIndex, setActiveIndex] = useState(null);
 
     const handleFullScanClick = () => {
       setIsScanMode(0);
       setLoading(false);
       setData(null);
+      setHomePath("");
     };
 
     const handleFolderScanClick = () => {
       setIsScanMode(1);
       setLoading(false);
       setData(null); 
+      setHomePath("");
     };
 
     const handleMode = () => {

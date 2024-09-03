@@ -7,9 +7,10 @@ const ScanModeProvider = ({ children }) => {
   const [currentPath, setCurrentPath] = useState("");
   const [ selectedPath, setSelectedPath ] = useState(0);
   const [ loading, setLoading ] = useState(false)
+  const [ homePath, setHomePath ] = useState("")
 
   return (
-    <ScanModeContext.Provider value={{ selectedPath, setSelectedPath, loading, setLoading, currentPath, setCurrentPath, data, setData, isScanMode, setIsScanMode }}>
+    <ScanModeContext.Provider value={{ homePath, setHomePath, selectedPath, setSelectedPath, loading, setLoading, currentPath, setCurrentPath, data, setData, isScanMode, setIsScanMode }}>
       {children}
     </ScanModeContext.Provider>
   );

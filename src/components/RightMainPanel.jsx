@@ -9,7 +9,9 @@ import Loading from './Loading';
 
 const RightMainPanel = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const { loading, setLoading, isScanMode, data, setData } = useContext(ScanModeContext);
+  const [activeView, setActiveView] = useState(0);
+  const [nextPath, setNextPath] = useState([]);
+  const { setCurrentPath, loading, setLoading, isScanMode, data, setData, homePath, currentPath } = useContext(ScanModeContext);
 
   useEffect(() => {
     if (isScanMode !== null) {
@@ -19,21 +21,61 @@ const RightMainPanel = () => {
     if (data && data.length !== 0){
       setLoading(false);
     }
-  }, [isScanMode, data, setData]);
+  }, [isScanMode, data, setData, setLoading]);
+
+  const navigateToDirectory = (file) => {
+    if (file.isDirectory) {
+      const newPath = `${currentPath}\\${file.name}`;
+      window.electronAPI.navigateDirectory(newPath)
+        .then((result) => {
+          console.log('Result from navigateDirectory:', result);
+          if (result && result.path && Array.isArray(result.files)) {
+            setCurrentPath(result.path);
+            setData(result.files);
+            setNextPath([]); // Clear nextPath when navigating to a new directory
+          } else {
+            console.error('Unexpected result format:', result);
+          }
+        })
+        .catch((err) => {
+          console.error('Error navigating directory:', err);
+        });
+    }
+  };
+
+  const handleBackButton = (inputPath) => {
+    const lastSlashIndex = inputPath.lastIndexOf('\\');
+    
+    // Split the input into two parts
+    const newCurrentPath = inputPath.substring(0, lastSlashIndex);
+    const newNextPath = inputPath.substring(lastSlashIndex + 1);
+    
+    // Set new current and next paths
+    setCurrentPath(newCurrentPath);
+    setNextPath(prev => [...prev, newNextPath]); // Append the last part of the path to nextPath
+  };
+
+  const handleNavigateForward = () => {
+    if (nextPath.length > 0) {
+      const lastElement = nextPath[nextPath.length - 1];
+      setNextPath(prev => prev.slice(0, -1));
+      navigateToDirectory({ isDirectory: true, name: lastElement });
+    }
+  };
 
   const svgs = [
-    <svg key={0} className={activeIndex === 0 ? "active-view" : ""} width="33" height="34" viewBox="0 0 33 34" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => handleSvgClick(0)}>
+    <svg key={0} className={activeView === 0 ? "active-view" : ""} width="33" height="34" viewBox="0 0 33 34" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => handleSvgClick(0)}>
       <circle cx="10" cy="10" r="10" fill="white"/>
       <circle cx="21" cy="26" r="8" fill="white"/>
       <circle cx="27.5" cy="11.5" r="5.5" fill="white"/>
       <circle cx="4.5" cy="25.5" r="3.5" fill="white"/>
     </svg>,
-    <svg key={1} className={activeIndex === 1 ? "active-view" : ""} width="44" height="37" viewBox="0 0 44 37" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => handleSvgClick(1)}>
+    <svg key={1} className={activeView === 1 ? "active-view" : ""} width="44" height="37" viewBox="0 0 44 37" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => handleSvgClick(1)}>
       <path d="M5 5H39" stroke="white" strokeWidth="10" strokeLinecap="round"/>
       <path d="M5 18.1351H39" stroke="white" strokeWidth="10" strokeLinecap="round"/>
       <path d="M5 32H39" stroke="white" strokeWidth="10" strokeLinecap="round"/>
     </svg>,
-    <svg key={2} className={activeIndex === 2 ? "active-view" : ""} width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => handleSvgClick(2)}>
+    <svg key={2} className={activeView === 2 ? "active-view" : ""} width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => handleSvgClick(2)}>
       <rect y="17.7391" width="16.2609" height="16.2609" rx="2" fill="white"/>
       <rect width="16.2609" height="16.2609" rx="2" fill="white"/>
       <rect x="17.7391" y="17.7391" width="16.2609" height="16.2609" rx="2" fill="white"/>
@@ -52,12 +94,22 @@ const RightMainPanel = () => {
       <path fillRule="evenodd" clipRule="evenodd" d="M29.4858 8.86044C30.1325 8.47194 30.1325 7.53449 29.4858 7.14599L17.83 0.144314C17.1635 -0.256065 16.3151 0.224012 16.3151 1.00154V5.75311H1C0.447718 5.75311 2.04891e-06 6.20083 2.04891e-06 6.75311V9.25334C2.04891e-06 9.80562 0.447718 10.2533 1 10.2533H16.3151V15.0049C16.3151 15.7824 17.1635 16.2625 17.83 15.8621L29.4858 8.86044Z" fill="white"/>
     </svg>
   ]
- const handleSvgClick = (index) => {
-    setActiveIndex(index);
+
+  const handleSvgClick = (index) => {
+    setActiveView(index);
   };
 
   const handleOpClick = (index) => {
     setActiveIndex(index);
+    if (index === 3) {
+      setCurrentPath(homePath);
+    }
+    if (index === 4) {
+      handleBackButton();
+    }
+    if (index === 5) {
+      handleNavigateForward();
+    }
     setTimeout(() => {
         setActiveIndex(null);
     }, 150);
@@ -67,7 +119,7 @@ const RightMainPanel = () => {
     <div className='RightMain'>
       <div className='top'>
         <div className='top-right bg-10'>{svgs2}</div>
-        <div className='top-left'>Path</div>
+        <div className='top-left'>{homePath ? homePath : "Path"}</div>
         <div className='top-right bg-10'>{svgs}</div>
       </div>
       <div className='bottom center' id='Main-Display-Content'>

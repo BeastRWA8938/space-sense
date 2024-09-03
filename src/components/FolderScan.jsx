@@ -3,7 +3,7 @@ import './FolderScan.css';
 import { ScanModeContext } from './ScanModeProvider';
 
 const FolderScan = () => {
-  const { setCurrentPath, selectedPath, setSelectedPath, setLoading } = useContext(ScanModeContext);
+  const { setHomePath, setCurrentPath, selectedPath, setSelectedPath, setLoading } = useContext(ScanModeContext);
 
   const openDirectory = async () => {
     try {
@@ -18,6 +18,7 @@ const FolderScan = () => {
 
   const handelStartScan = () => {
     setCurrentPath(selectedPath);
+    setHomePath(selectedPath);
     setLoading(true);
   }
 
