@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import "./RightMainPanel.css";
 import TreeMap from './TreeMap';
 import EnclosureDisplay from './EnclosureDisplay';
-import { ScanModeContext } from './ScanModeProvider';
+import { ScanModeContext, ScanModeProvider } from './ScanModeProvider';
 import FullScan from './FullScan';
 import FolderScan from './FolderScan';
 import Loading from './Loading';
@@ -15,14 +15,10 @@ const RightMainPanel = () => {
   const { setCurrentPath, loading, setLoading, isScanMode, data, setData, homePath, currentPath } = useContext(ScanModeContext);
 
   useEffect(() => {
-    if (isScanMode !== null) {
-      setData([]); 
-    }
+    console.log("isScanMode",isScanMode)
+    console.log("CurrentPath", currentPath)
+  }, [isScanMode,currentPath, loading]);
 
-    if (data && data.length !== 0){
-      setLoading(false);
-    }
-  }, [isScanMode, setLoading]);
 
   const navigateToDirectory = (file) => {
     if (file.isDirectory) {
@@ -103,7 +99,8 @@ const RightMainPanel = () => {
   const handleOpClick = (index) => {
     setActiveIndex(index);
     if (index === 3) {
-      setCurrentPath(homePath);
+      console.log(homePath)
+      setCurrentPath("line 103 of right main",homePath);
     }
     if (index === 4) {
       handleBackButton();
@@ -124,10 +121,10 @@ const RightMainPanel = () => {
         <div className='top-right bg-10'>{svgs}</div>
       </div>
       <div className='bottom center' id='Main-Display-Content'>
-        {console.log("rendering the rightmain", data.length, data, loading)}
-        {data && data.length === 0 ? (
+        {data && data.length === 0 ? (console.log("rendering the rightmain", data.length, data, loading)) : null}
+        {isScanMode !== 3 ? (
           loading !== true ? (
-            isScanMode === 0 ? <FullScan /> : isScanMode === 1 ? <FolderScan /> : null
+            isScanMode === 0 ? <FullScan /> : isScanMode === 1 ? <ScanModeProvider><FolderScan /></ScanModeProvider> : null
           ) : <Loading/>
         ) : (
           activeIndex === 0 ? (

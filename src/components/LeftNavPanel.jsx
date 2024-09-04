@@ -11,14 +11,14 @@ const LeftNavPanel = () => {
     const handleFullScanClick = () => {
       setIsScanMode(0);
       setLoading(false);
-      setData(null);
+      setData([]);
       setHomePath("");
     };
 
     const handleFolderScanClick = () => {
       setIsScanMode(1);
       setLoading(false);
-      setData(null); 
+      setData([]); 
       setHomePath("");
     };
 
