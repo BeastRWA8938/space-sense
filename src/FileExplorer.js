@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 function FileExplorer() {
   const [currentPath, setCurrentPath] = useState('');
   const [files, setFiles] = useState([]);
+  const [scanning, setScanning] = useState(false); // Add state for scanning
 
-  useEffect(() => {
+  const startScanning = () => {
+    setScanning(true); // Set scanning to true when button is clicked
+
     window.electronAPI.getInitialDirectory()
       .then((result) => {
+        setScanning(false); // Reset scanning state after fetching
         console.log('Result from getInitialDirectory:', result);
         if (result && result.path && Array.isArray(result.files)) {
           setCurrentPath(result.path);
@@ -16,9 +20,10 @@ function FileExplorer() {
         }
       })
       .catch((err) => {
+        setScanning(false); // Reset scanning state on error
         console.error('Error fetching initial directory:', err);
       });
-  }, []);
+  };
 
   const navigateToDirectory = (file) => {
     if (file.isDirectory) {
@@ -41,6 +46,9 @@ function FileExplorer() {
 
   return (
     <div>
+      <button onClick={startScanning} disabled={scanning}>
+        {scanning ? 'Scanning...' : 'Start Scanning'}
+      </button>
       <h2>Current Path: {currentPath}</h2>
       <ul>
         {files.length === 0 ? (

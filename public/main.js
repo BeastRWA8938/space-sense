@@ -2,22 +2,32 @@ const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const path = require("path");
 const fs = require("fs").promises; // Use fs.promises for async operations
 
-// Function to get directory contents
 async function getDirectoryContents(dirPath) {
   try {
     const files = await fs.readdir(dirPath);
     const fileDetails = await Promise.all(
       files.map(async (file) => {
         const filePath = path.join(dirPath, file);
-        const stats = await fs.stat(filePath);
-        return {
-          name: file,
-          size: stats.size,
-          isDirectory: stats.isDirectory(),
-        };
+        try {
+          const stats = await fs.stat(filePath);
+          return {
+            name: file,
+            size: stats.size,
+            isDirectory: stats.isDirectory(),
+          };
+        } catch (error) {
+          if (error.code === 'EBUSY') {
+            console.warn(`Skipping busy or locked file: ${filePath}`);
+            return null; // Return null for skipped files
+          } else {
+            throw error; // Re-throw other errors
+          }
+        }
       })
     );
-    return fileDetails;
+
+    // Filter out null entries (skipped files)
+    return fileDetails.filter(fileDetail => fileDetail !== null);
   } catch (error) {
     console.error("Error reading directory:", error);
     throw error;
