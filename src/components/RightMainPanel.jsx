@@ -124,6 +124,7 @@ const RightMainPanel = () => {
         <div className='top-right bg-10'>{svgs}</div>
       </div>
       <div className='bottom center' id='Main-Display-Content'>
+        {console.log("rendering the rightmain", data.length, data, loading)}
         {data && data.length === 0 ? (
           loading !== true ? (
             isScanMode === 0 ? <FullScan /> : isScanMode === 1 ? <FolderScan /> : null

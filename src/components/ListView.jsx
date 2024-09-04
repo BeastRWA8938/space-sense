@@ -4,6 +4,7 @@ import './ListView.css'; // Import the CSS file for styling
 const ListView = ({ data }) => {
   return (
     <div className="list-view">
+        {console.log("rendering list view")}
       {data && data.length > 0 ? (
         <ul>
           {data.map((item, index) => (
