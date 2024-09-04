@@ -10,14 +10,18 @@ import ListView from './ListView';
 
 const RightMainPanel = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [activeView, setActiveView] = useState(0);
+  const [activeView, setActiveView] = useState(1);
   const [nextPath, setNextPath] = useState([]);
-  const { setCurrentPath, loading, setLoading, isScanMode, data, setData, homePath, currentPath } = useContext(ScanModeContext);
+  const { setCurrentPath, loading, setLoading, isScanMode, setIsScanMode, data, setData, homePath, setHomePath, currentPath } = useContext(ScanModeContext);
 
   useEffect(() => {
-    console.log("isScanMode",isScanMode)
-    console.log("CurrentPath", currentPath)
-  }, [isScanMode,currentPath, loading]);
+    if (data && data.length !== 0) {
+      setIsScanMode(3);
+    }
+    if (currentPath.length !== 0) {
+      setHomePath(currentPath);
+    }
+  }, [data]);
 
 
   const navigateToDirectory = (file) => {
@@ -97,10 +101,10 @@ const RightMainPanel = () => {
   };
 
   const handleOpClick = (index) => {
-    setActiveIndex(index);
+    setActiveView(index);
     if (index === 3) {
-      console.log(homePath)
-      setCurrentPath("line 103 of right main",homePath);
+      console.log("this is home path" , homePath)
+      setCurrentPath(homePath);
     }
     if (index === 4) {
       handleBackButton();
@@ -109,7 +113,7 @@ const RightMainPanel = () => {
       handleNavigateForward();
     }
     setTimeout(() => {
-        setActiveIndex(null);
+        setActiveView(null);
     }, 150);
   };
 
@@ -121,23 +125,33 @@ const RightMainPanel = () => {
         <div className='top-right bg-10'>{svgs}</div>
       </div>
       <div className='bottom center' id='Main-Display-Content'>
-        {data && data.length === 0 ? (console.log("rendering the rightmain", data.length, data, loading)) : null}
-        {isScanMode !== 3 ? (
-          loading !== true ? (
-            isScanMode === 0 ? <FullScan /> : isScanMode === 1 ? <ScanModeProvider><FolderScan /></ScanModeProvider> : null
-          ) : <Loading/>
+  
+        {/* Handle loading state first */}
+        {/* {data ? setLoading(false) : setLoading(true)} */}
+        {loading ? (
+          <Loading />
         ) : (
-          activeIndex === 0 ? (
-            <EnclosureDisplay data={data} width={1135} height={653} />
-          ) : activeIndex === 1 ? (
-            <ListView data={data}/>
-          ) : activeIndex === 2 ? (
-            <TreeMap data={data} width={1135} height={653} />
-          ) : null
+          /* If no data is present, render scanning components */
+          data && data.length === 0 ? (
+            isScanMode === 0 ? (
+              <FullScan />
+            ) : isScanMode === 1 ? (
+              <ScanModeProvider><FolderScan /></ScanModeProvider>
+            ) : <div>data is null or length is 0</div>
+          ) : (
+            /* If data is present, render the appropriate view */
+            activeIndex === 0 ? (
+              <EnclosureDisplay data={data} width={1135} height={653} />
+            ) : activeIndex === 1 ? (
+              <ListView data={data} />
+            ) : activeIndex === 2 ? (
+              <TreeMap data={data} width={1135} height={653} />
+            ) : <div>No View Capable</div>
+          )
         )}
+  
       </div>
     </div>
   );
-};
-
+}  
 export default RightMainPanel;

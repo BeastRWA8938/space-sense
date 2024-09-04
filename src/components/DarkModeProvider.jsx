@@ -5,7 +5,7 @@ const DarkModeContext = React.createContext();
 
 // Define the DarkMode provider component
 const DarkModeProvider = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   useEffect(() => {
     // Apply the class based on the theme
