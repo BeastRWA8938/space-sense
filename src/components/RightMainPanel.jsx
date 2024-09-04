@@ -6,6 +6,7 @@ import { ScanModeContext } from './ScanModeProvider';
 import FullScan from './FullScan';
 import FolderScan from './FolderScan';
 import Loading from './Loading';
+import ListView from './ListView';
 
 const RightMainPanel = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -21,12 +22,12 @@ const RightMainPanel = () => {
     if (data && data.length !== 0){
       setLoading(false);
     }
-  }, [isScanMode, data, setData, setLoading]);
+  }, [isScanMode, setLoading]);
 
   const navigateToDirectory = (file) => {
     if (file.isDirectory) {
       const newPath = `${currentPath}\\${file.name}`;
-      window.electronAPI.navigateDirectory(newPath)
+      window.electron.navigateDirectory(newPath)
         .then((result) => {
           console.log('Result from navigateDirectory:', result);
           if (result && result.path && Array.isArray(result.files)) {
@@ -131,7 +132,7 @@ const RightMainPanel = () => {
           activeIndex === 0 ? (
             <EnclosureDisplay data={data} width={1135} height={653} />
           ) : activeIndex === 1 ? (
-            <div>List</div>
+            <ListView data={data}/>
           ) : activeIndex === 2 ? (
             <TreeMap data={data} width={1135} height={653} />
           ) : null

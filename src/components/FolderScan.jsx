@@ -3,23 +3,54 @@ import './FolderScan.css';
 import { ScanModeContext } from './ScanModeProvider';
 
 const FolderScan = () => {
-  const { setHomePath, setCurrentPath, selectedPath, setSelectedPath, setLoading } = useContext(ScanModeContext);
+  const { homePath, setData, setHomePath, setCurrentPath, selectedPath, setSelectedPath, setLoading } = useContext(ScanModeContext);
 
   const openDirectory = async () => {
     try {
       const result = await window.electron.openDirectory();
       if (result.path) {
+        console.log("line 12 folderscan: ", result.path)
         setSelectedPath(result.path);
+      }
+      if (result.files) {
+        console.log("line 12 folderscan: ", result.files)
+        setData(result.files)
       }
     } catch (error) {
       console.error('Error opening directory:', error);
     }
   };
 
+  const startScanning = () => {
+    setLoading(true);
+  
+    if (typeof selectedPath !== 'string') {
+      console.error('Invalid path:', selectedPath);
+      setLoading(false);
+      return;
+    }
+  
+    window.electron.getInitialDirectory(selectedPath)
+      .then((result) => {
+        setLoading(false);
+        if (result && result.path && Array.isArray(result.files)) {
+          setCurrentPath(result.path);
+          setData(result.files);
+        } else {
+          console.error('Unexpected result format:', result);
+        }
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.error('Error fetching initial directory:', err);
+      });
+  };
+  
+  
   const handelStartScan = () => {
     setCurrentPath(selectedPath);
     setHomePath(selectedPath);
-    setLoading(true);
+    startScanning(selectedPath);
   }
 
   return (
