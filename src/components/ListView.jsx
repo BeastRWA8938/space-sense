@@ -10,7 +10,7 @@ const ListView = ({ data }) => {
           {data.map((item, index) => (
             <li key={index} className={item.isDirectory ? 'directory' : 'file'}>
               <span className="item-name">{item.name}</span>
-              {!item.isDirectory && <span className="item-size">{item.size} bytes</span>}
+              {<span className="item-size">{item.size} {item.sizeType}</span>}
             </li>
           ))}
         </ul>

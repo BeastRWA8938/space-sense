@@ -9,3 +9,5 @@ contextBridge.exposeInMainWorld('electron', {
   getInitialDirectory: (homePath) => ipcRenderer.invoke('directory:getInitial', homePath),
   navigateDirectory: (dirPath) => ipcRenderer.invoke('directory:navigate', dirPath),
 });
+
+

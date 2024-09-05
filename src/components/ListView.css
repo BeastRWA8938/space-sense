@@ -16,7 +16,7 @@
   }
   
   .list-view li {
-    background-color: var(--60-color);
+    background-color: var(--10-color);
     margin: 4px 0;
     gap: 4px;
     padding: 8px;
