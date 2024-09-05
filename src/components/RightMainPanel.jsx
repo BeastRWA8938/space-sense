@@ -130,28 +130,32 @@ const RightMainPanel = () => {
         {/* Handle loading state first */}
         {/* {data ? setLoading(false) : setLoading(true)} */}
         {console.log(data)}
-        {loading ? (
-          <Loading />
-        ) : (
-          /* If no data is present, render scanning components */
-          data && data.length === 0 ? (
-            isScanMode === 0 ? (
-              <FullScan />
-            ) : isScanMode === 1 ? (
-              <ScanModeProvider><FolderScan /></ScanModeProvider>
-            ) : <div>data is null or length is 0</div>
+        {data && data.length === 0 && !loading ? (
+          /* Case 1: No data, loading is false */
+          isScanMode === 0 ? (
+            <FullScan />
+          ) : isScanMode === 1 ? (
+            <FolderScan />
           ) : (
-            /* If data is present, render the appropriate view */
-            activeView === 0 ? (
-              <EnclosureDisplay data={data} width={1135} height={653} />
-            ) : activeView === 1 ? (
-              <ListView data={data} />
-            ) : activeView === 2 ? (
-              <TreeMap data={data} width={1135} height={653} />
-            ) : <div>No View Capable</div>
+            <div>No data available</div>
           )
+        ) : data && data.length === 0 && loading ? (
+          /* Case 2: No data, loading is true */
+          <Loading />
+        ) : data && data.length >= 0 ? (
+          /* Case 3: Data exists, loading is false */
+          activeView === 0 ? (
+            <EnclosureDisplay data={data} width={1135} height={653} />
+          ) : activeView === 1 ? (
+            <ListView data={data} />
+          ) : activeView === 2 ? (
+            <TreeMap data={data} width={1135} height={653} />
+          ) : (
+            <div>No View Capable</div>
+          )
+        ) : (
+          <Loading />
         )}
-  
       </div>
     </div>
   );
