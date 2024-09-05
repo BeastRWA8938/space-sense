@@ -50,8 +50,12 @@ const FolderScan = () => {
       setLoading(false);
       return;
     }
-
-    setLoading(true);
+    
+    if (data){
+    setLoading(false);
+    } else {
+      setLoading(true)
+    }
     try {
       const result = await window.electron.getInitialDirectory(selectedPath);
       if (result && result.path && Array.isArray(result.files)) {
@@ -75,9 +79,6 @@ const FolderScan = () => {
       setHomePath(selectedPath);
       setIsScanMode(3); // Update scan mode to start scan
       startScanning(selectedPath);
-      console.log("Home Path:", homePath);
-      console.log("Selected Path:", selectedPath);
-      console.log("Current Path:", currentPath);
     } else {
       console.error("No path selected");
     }

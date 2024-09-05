@@ -117,6 +117,7 @@ const RightMainPanel = () => {
     }, 150);
   };
 
+  console.log(activeIndex)
   return (
     <div className='RightMain'>
       <div className='top'>
@@ -128,6 +129,7 @@ const RightMainPanel = () => {
   
         {/* Handle loading state first */}
         {/* {data ? setLoading(false) : setLoading(true)} */}
+        {console.log(data)}
         {loading ? (
           <Loading />
         ) : (
@@ -140,11 +142,11 @@ const RightMainPanel = () => {
             ) : <div>data is null or length is 0</div>
           ) : (
             /* If data is present, render the appropriate view */
-            activeIndex === 0 ? (
+            activeView === 0 ? (
               <EnclosureDisplay data={data} width={1135} height={653} />
-            ) : activeIndex === 1 ? (
+            ) : activeView === 1 ? (
               <ListView data={data} />
-            ) : activeIndex === 2 ? (
+            ) : activeView === 2 ? (
               <TreeMap data={data} width={1135} height={653} />
             ) : <div>No View Capable</div>
           )
