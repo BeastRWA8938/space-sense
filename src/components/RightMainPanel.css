@@ -33,8 +33,23 @@
 
 
 #Main-Display-Content {
-    overflow: hidden;
+    overflow-y: auto; /* Enables vertical scroll if needed */
+    overflow-x: hidden; /* Hides horizontal scroll */
     padding: 5px;
+}
+
+/* Scrollbar styles */
+#Main-Display-Content::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+#Main-Display-Content::-webkit-scrollbar-track {
+    background: var(--30-color); /* Background of the scrollbar track */
+}
+
+#Main-Display-Content::-webkit-scrollbar-thumb {
+    background-color: var(--60-color); /* Color of the scrollbar handle */
+    border-radius: 4px;
 }
 
 .wrap {

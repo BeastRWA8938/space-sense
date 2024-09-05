@@ -1,10 +1,13 @@
 .list-view {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: start;
+    width: 100%;
+    height: 100%;
   }
   
   .list-view ul {
+    width: 100%;
     list-style-type: none;
     padding: 0;
     display: flex;
@@ -13,19 +16,21 @@
   }
   
   .list-view li {
+    background-color: var(--60-color);
+    margin: 4px 0;
+    gap: 4px;
     padding: 8px;
-    border-bottom: 1px solid #ccc;
     display: flex;
     justify-content: space-between;
   }
   
   .list-view .directory {
     font-weight: bold;
-    color: #007bff;
+    color: var(--normal-color);
   }
   
   .list-view .file {
-    color: #333;
+    color: var(--normal-color);
   }
   
   .item-name {
@@ -35,6 +40,6 @@
   
   .item-size {
     font-size: 0.9em;
-    color: #666;
+    color: var(--normal-color);
   }
   

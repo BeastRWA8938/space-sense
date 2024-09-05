@@ -12,7 +12,7 @@ const RightMainPanel = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeView, setActiveView] = useState(1);
   const [nextPath, setNextPath] = useState([]);
-  const { setCurrentPath, loading, setLoading, isScanMode, setIsScanMode, data, setData, homePath, setHomePath, currentPath } = useContext(ScanModeContext);
+  const { setCurrentPath, loading, isScanMode, setIsScanMode, data, setData, homePath, setHomePath, currentPath } = useContext(ScanModeContext);
 
   useEffect(() => {
     if (data && data.length !== 0) {
@@ -101,7 +101,7 @@ const RightMainPanel = () => {
   };
 
   const handleOpClick = (index) => {
-    setActiveView(index);
+    setActiveIndex(index);
     if (index === 3) {
       console.log("this is home path" , homePath)
       setCurrentPath(homePath);
@@ -113,7 +113,7 @@ const RightMainPanel = () => {
       handleNavigateForward();
     }
     setTimeout(() => {
-        setActiveView(null);
+      setActiveIndex(null);
     }, 150);
   };
 
@@ -126,10 +126,6 @@ const RightMainPanel = () => {
         <div className='top-right bg-10'>{svgs}</div>
       </div>
       <div className='bottom center' id='Main-Display-Content'>
-  
-        {/* Handle loading state first */}
-        {/* {data ? setLoading(false) : setLoading(true)} */}
-        {console.log(data)}
         {data && data.length === 0 && !loading ? (
           /* Case 1: No data, loading is false */
           isScanMode === 0 ? (
