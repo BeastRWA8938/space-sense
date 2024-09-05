@@ -155,5 +155,6 @@ const RightMainPanel = () => {
       </div>
     </div>
   );
-}  
+}
+
 export default RightMainPanel;
