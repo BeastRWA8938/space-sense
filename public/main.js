@@ -1,20 +1,75 @@
-const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
-const fs = require("fs").promises; // Use fs.promises for async operations
+const fs = require("fs").promises;
 
-// Function to get directory contents
+// Function to get the size of a directory by summing the sizes of its contents
+async function getDirectorySize(dirPath) {
+  try {
+    const files = await fs.readdir(dirPath);
+    const sizes = await Promise.all(
+      files.map(async (file) => {
+        const filePath = path.join(dirPath, file);
+        try {
+          const stats = await fs.stat(filePath);
+
+          if (stats.isDirectory()) {
+            return getDirectorySize(filePath); // Recursively get the size of subdirectories
+          } else {
+            return stats.size; // Return file size
+          }
+        } catch (error) {
+          if (error.code === 'EPERM' || error.code === 'EACCES') {
+            console.warn(`Permission denied: ${filePath}`);
+            return 0; // Return 0 size for directories/files that can't be accessed
+          } else {
+            throw error; // Re-throw other unexpected errors
+          }
+        }
+      })
+    );
+
+    return sizes.reduce((total, size) => total + size, 0);
+  } catch (error) {
+    console.error("Error reading directory:", error);
+    return 0; // Return 0 if directory can't be read
+  }
+}
+
+// Function to get directory contents with sizes
 async function getDirectoryContents(dirPath) {
   try {
     const files = await fs.readdir(dirPath);
     const fileDetails = await Promise.all(
       files.map(async (file) => {
         const filePath = path.join(dirPath, file);
-        const stats = await fs.stat(filePath);
-        return {
-          name: file,
-          size: stats.size,
-          isDirectory: stats.isDirectory(),
-        };
+        try {
+          const stats = await fs.stat(filePath);
+
+          let size = 0;
+          if (stats.isDirectory()) {
+            size = await getDirectorySize(filePath); // Try to get the size of the directory
+          } else {
+            size = stats.size; // Get the size of the file
+          }
+
+          return {
+            name: file,
+            size: size,
+            isDirectory: stats.isDirectory(),
+          };
+        } catch (error) {
+          if (error.code === 'EPERM' || error.code === 'EACCES') {
+            console.warn(`Permission denied: ${filePath}`);
+            return {
+              name: file,
+              size: 0,
+              isDirectory: stats.isDirectory(),
+              permissionDenied: true
+            }; // Return item with a note that permission was denied
+          } else {
+            throw error; // Re-throw other unexpected errors
+          }
+        }
       })
     );
     return fileDetails;
@@ -33,7 +88,7 @@ function createWindow() {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       enableRemoteModule: false,
-      nodeIntegration: true, // Ensure nodeIntegration is false for security
+      nodeIntegration: true,
       sandbox: true, // Optional: Adds additional security by running the renderer in a sandbox
     },
   });
@@ -81,6 +136,26 @@ ipcMain.handle("directory:navigate", async (event, dirPath) => {
     return { path: dirPath, files };
   } catch (error) {
     console.error("Error navigating directory:", error);
+    return { path: "", files: [] };
+  }
+});
+
+ipcMain.handle("dialog:openDirectory", async () => {
+  try {
+    const result = await dialog.showOpenDialog({
+      properties: ["openDirectory"],
+    });
+
+    if (result.canceled || result.filePaths.length === 0) {
+      return { path: "", files: [] };
+    }
+
+    const dirPath = result.filePaths[0];
+    const files = await getDirectoryContents(dirPath);
+
+    return { path: dirPath, files };
+  } catch (error) {
+    console.error("Error handling directory request:", error);
     return { path: "", files: [] };
   }
 });
