@@ -1,7 +1,7 @@
 import React from 'react';
 import './ListView.css'; // Import the CSS file for styling
 
-const ListView = ({ data }) => {
+const ListView = ({ data, navigateToDirectory }) => {
   return (
     <div className="list-view">
       {console.log("rendering list view")}

@@ -1,12 +1,11 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
-import './EnclosureDisplay.css'; // Make sure to import the CSS file
+import './EnclosureDisplay.css';
 
-const EnclosureDisplay = ({ data, width, height }) => {
+const EnclosureDisplay = ({ info, width, height, navigateToDirectory }) => {
   const divRef = useRef();
-
   useEffect(() => {
-    if (!data) return;
+    if (!info) return;
 
     const container = d3.select(divRef.current)
       .style('position', 'relative')
@@ -17,7 +16,7 @@ const EnclosureDisplay = ({ data, width, height }) => {
       .size([width, height])
       .padding(3);
 
-    const root = d3.hierarchy(data)
+    const root = d3.hierarchy(info)
       .sum(d => d.value);
 
     const nodes = pack(root).descendants();
@@ -25,7 +24,7 @@ const EnclosureDisplay = ({ data, width, height }) => {
     // Remove any existing nodes
     container.selectAll('div').remove();
 
-    // Create divs for each node with a className
+    // Create divs for each node with a className and onClick handler
     container.selectAll('div')
       .data(nodes)
       .enter()
@@ -35,8 +34,12 @@ const EnclosureDisplay = ({ data, width, height }) => {
       .style('top', d => `${d.y - d.r}px`)
       .style('width', d => `${2 * d.r}px`)
       .style('height', d => `${2 * d.r}px`)
-      .text(d => d.children ? '' : d.data.name);
-  }, [data, width, height]);
+      .html(d => `${d.data.name}<br>Size: ${d.data.size} ${d.data.sizeType}`)
+      .on("click", (event, d) => {
+        // Pass the name to navigateToDirectory when a node is clicked
+        navigateToDirectory(d.data.name);
+      })
+  }, [info, width, height,navigateToDirectory]);
 
   return <div ref={divRef} />;
 };

@@ -11,8 +11,7 @@ import ListView from './ListView';
 const RightMainPanel = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeView, setActiveView] = useState(1);
-  const [nextPath, setNextPath] = useState([]);
-  const { setCurrentPath, loading, isScanMode, setIsScanMode, data, setData, homePath, setHomePath, currentPath } = useContext(ScanModeContext);
+  const { nextPath, setNextPath , setCurrentPath, loading, isScanMode, setIsScanMode, data, setData, homePath, setHomePath, currentPath } = useContext(ScanModeContext);
 
   useEffect(() => {
     if (data && data.length !== 0) {
@@ -141,11 +140,11 @@ const RightMainPanel = () => {
         ) : data && data.length >= 0 ? (
           /* Case 3: Data exists, loading is false */
           activeView === 0 ? (
-            <EnclosureDisplay data={data} width={1135} height={653} />
+            <EnclosureDisplay info={{"name": "root","children": data}} navigateToDirectory={navigateToDirectory} width={1135} height={653} />
           ) : activeView === 1 ? (
-            <ListView data={data} />
+            <ListView data={data} navigateToDirectory={navigateToDirectory}/>
           ) : activeView === 2 ? (
-            <TreeMap data={data} width={1135} height={653} />
+            <TreeMap info={{"name": "root","children": data}} navigateToDirectory={navigateToDirectory} width={1135} height={653} />
           ) : (
             <div>No View Capable</div>
           )

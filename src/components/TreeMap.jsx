@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
-import './TreeMap.css'; // Make sure to import the CSS file
+import './TreeMap.css';
 
-const TreeMap = ({ data, width, height }) => {
+const TreeMap = ({ info, width, height, navigateToDirectory }) => {
   const ref = useRef();
 
   useEffect(() => {
@@ -13,14 +13,14 @@ const TreeMap = ({ data, width, height }) => {
       .style("height", `${height}px`);
 
     // Create a hierarchy from the data
-    const root = d3.hierarchy(data)
+    const root = d3.hierarchy(info)
       .sum(d => d.value)
       .sort((a, b) => b.value - a.value);
 
     // Create the treemap layout
     d3.treemap()
       .size([width, height])
-      .padding(1)(root);
+      .padding(3)(root);
 
     // Remove any existing nodes
     container.selectAll("div").remove();
@@ -35,10 +35,15 @@ const TreeMap = ({ data, width, height }) => {
       .style("top", d => `${d.y0}px`)
       .style("width", d => `${d.x1 - d.x0}px`)
       .style("height", d => `${d.y1 - d.y0}px`)
+      .on("click", (event, d) => {
+        // Pass the name to navigateToDirectory when a node is clicked
+        alert("clicked on ${d.data.name}")
+        navigateToDirectory(d.data.name);
+      })
       .append("div")
       .attr("class", "treemap-content")
-      .html(d => `${d.data.name}<br>Size: ${d.data.totalsize}`);
-  }, [data, width, height]);
+      .html(d => `${d.data.name}<br>Size: ${d.data.size} ${d.data.sizeType}`);
+  }, [info, width, height, navigateToDirectory]);
 
   return <div ref={ref} />;
 };

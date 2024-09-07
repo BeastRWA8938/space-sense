@@ -92,9 +92,9 @@ async function getDirectoryContents(dirPath) {
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 1400,
-    height: 800,
-    resizable: false,
+    minWidth: 1400,
+    minHeight: 800,
+    // resizable: false,
     icon: path.join(__dirname, 'SpaceSenseLogo.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
