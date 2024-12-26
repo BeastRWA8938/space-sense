@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import "./RightMainPanel.css";
 import TreeMap from './TreeMap';
 import EnclosureDisplay from './EnclosureDisplay';
-import { ScanModeContext, ScanModeProvider } from './ScanModeProvider';
+import { ScanModeContext } from './ScanModeProvider';
 import FullScan from './FullScan';
 import FolderScan from './FolderScan';
 import Loading from './Loading';
@@ -26,6 +26,7 @@ const RightMainPanel = () => {
   const navigateToDirectory = (file) => {
     if (file.isDirectory) {
       const newPath = `${currentPath}\\${file.name}`;
+      console.log('Navigating to:', newPath);
       window.electron.navigateDirectory(newPath)
         .then((result) => {
           console.log('Result from navigateDirectory:', result);

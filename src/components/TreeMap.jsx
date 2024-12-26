@@ -1,33 +1,39 @@
-import React, { useEffect, useRef } from "react";
-import * as d3 from "d3";
+import React, { useRef, useEffect } from 'react';
+import * as d3 from 'd3';
 import './TreeMap.css';
 
 const TreeMap = ({ info, width, height, navigateToDirectory }) => {
   const ref = useRef();
 
   useEffect(() => {
-    // Select the container and set its size
+    if (!info) return;
+
     const container = d3.select(ref.current)
-      .style("position", "relative")
-      .style("width", `${width}px`)
-      .style("height", `${height}px`);
+      .style('position', 'relative')
+      .style('width', `${width}px`)
+      .style('height', `${height}px`);
 
-    // Create a hierarchy from the data
-    const root = d3.hierarchy(info)
-      .sum(d => d.value)
-      .sort((a, b) => b.value - a.value);
-
-    // Create the treemap layout
-    d3.treemap()
+    const treemap = d3.treemap()
       .size([width, height])
-      .padding(3)(root);
+      .padding(1);
+
+    const root = d3.hierarchy(info)
+      .sum(d => d.value);
+
+    treemap(root);
+
+    const nodes = root.leaves();
+
+    // Define minimum dimensions
+    const minWidth = 20;
+    const minHeight = 20;
 
     // Remove any existing nodes
-    container.selectAll("div").remove();
+    container.selectAll('div.treemap-node').remove();
 
-    // Create divs for each node with a className
-    container.selectAll("div")
-      .data(root.leaves())
+    // Create divs for each node with a className and onClick handler
+    container.selectAll('div.treemap-node')
+      .data(nodes.filter(d => (d.x1 - d.x0) >= minWidth && (d.y1 - d.y0) >= minHeight))
       .enter()
       .append("div")
       .attr("class", "treemap-node")
@@ -37,7 +43,7 @@ const TreeMap = ({ info, width, height, navigateToDirectory }) => {
       .style("height", d => `${d.y1 - d.y0}px`)
       .on("click", (event, d) => {
         // Pass the name to navigateToDirectory when a node is clicked
-        alert("clicked on ${d.data.name}")
+        alert(`clicked on ${d.data.name}`);
         navigateToDirectory(d.data.name);
       })
       .append("div")
