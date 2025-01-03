@@ -1,19 +1,35 @@
 .treemap-node {
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: var(--10-color);
-    box-sizing: border-box;
-    border: 1px solid var(--60-color);
-  }
-  
-  .treemap-content {
-    padding: 4px;
-    font-size: 12px;
-    color: var(--normal-color);
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-  
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--10-color);
+  box-sizing: border-box;
+  border: 1px solid var(--60-color);
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.treemap-node:hover {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.treemap-content {
+  padding: 4px;
+  font-size: 12px;
+  color: var(--normal-color);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.tooltip {
+  position: absolute;
+  visibility: hidden;
+  color: var(--30-color);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 5px;
+  pointer-events: none;
+}

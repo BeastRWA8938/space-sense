@@ -4,6 +4,7 @@ import './TreeMap.css';
 
 const TreeMap = ({ info, width, height, navigateToDirectory }) => {
   const ref = useRef();
+  const tooltipRef = useRef(); // Ref for the tooltip
 
   useEffect(() => {
     if (!info) return;
@@ -42,15 +43,45 @@ const TreeMap = ({ info, width, height, navigateToDirectory }) => {
       .style("width", d => `${d.x1 - d.x0}px`)
       .style("height", d => `${d.y1 - d.y0}px`)
       .on("click", (event, d) => {
-        // Pass the name to navigateToDirectory when a node is clicked
-        navigateToDirectory(d.data);
+        // Pass the correct object to navigateToDirectory when a node is clicked
+        const file = { name: d.data.name, isDirectory: d.data.isDirectory };
+        navigateToDirectory(file);
+      })
+      .on("mouseover", (event, d) => {
+        // Show tooltip on hover
+        const tooltip = d3.select(tooltipRef.current);
+        tooltip
+          .style('visibility', 'visible')
+          .html(`Name: ${d.data.name}<br>Size: ${d.data.size} ${d.data.sizeType}`)
+          .style('left', `${event.pageX + 10}px`) // Offset tooltip by 10px right
+          .style('top', `${event.pageY + 10}px`);  // Offset tooltip by 10px down
+      })
+      .on("mousemove", (event) => {
+        // Update tooltip position on mouse move
+        d3.select(tooltipRef.current)
+          .style('left', `${event.pageX + 10}px`)
+          .style('top', `${event.pageY + 10}px`);
+      })
+      .on("mouseout", () => {
+        // Hide tooltip when not hovering
+        d3.select(tooltipRef.current).style('visibility', 'hidden');
       })
       .append("div")
       .attr("class", "treemap-content")
-      .html(d => `${d.data.name}<br>Size: ${d.data.size} ${d.data.sizeType}`);
+      .html(d => {
+        const icon = d.data.isDirectory ? '📁' : '📄';
+        return `${icon} ${d.data.name}`;
+      });
+
   }, [info, width, height, navigateToDirectory]);
 
-  return <div ref={ref} />;
+  return (
+    <div>
+      <div ref={ref} />
+      {/* Tooltip div always present but hidden until hover */}
+      <div ref={tooltipRef} className="tooltip" style={{ position: 'absolute', visibility: 'hidden', backgroundColor: 'rgba(255, 255, 255, 0.8)', border: '1px solid #ccc', borderRadius: '4px', padding: '5px', pointerEvents: 'none' }}></div>
+    </div>
+  );
 };
 
 export default TreeMap;

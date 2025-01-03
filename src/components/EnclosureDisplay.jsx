@@ -16,7 +16,7 @@ const EnclosureDisplay = ({ info, width, height, navigateToDirectory }) => {
 
     const pack = d3.pack()
       .size([width, height])
-      .padding(3);
+      .padding(10);
 
     const root = d3.hierarchy(info)
       .sum(d => d.value);
@@ -46,10 +46,14 @@ const EnclosureDisplay = ({ info, width, height, navigateToDirectory }) => {
       .style('width', d => `${2 * d.r}px`)
       .style('height', d => `${2 * d.r}px`)
       .html(d => {
-        // Show icon for small circles and name for larger ones
+        // Show icon for small circles and name for larger ones, skip root node
+        if (d.depth === 0) {
+          return ''; // Skip root node
+        }
+        const icon = d.data.isDirectory ? '📁' : '📄';
         return d.r < 50
-          ? d.children ? '📁' : '📄' // Folder or file icon based on hierarchy
-          : `${d.data.name}`; // Show name if the circle is large enough
+          ? icon
+          : `<div class="node-text">${icon} ${d.data.name}</div>`; // Show icon and name if the circle is large enough
       })
       .on("click", (event, d) => {
         navigateToDirectory(d.data);
