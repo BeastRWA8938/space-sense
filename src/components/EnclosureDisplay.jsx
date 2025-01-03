@@ -24,8 +24,13 @@ const EnclosureDisplay = ({ info, width, height, navigateToDirectory }) => {
     let nodes = pack(root).descendants();
 
     // Set a minimum radius for the circles
-    const minRadius = 50;
-    nodes = nodes.filter(d => d.r >= minRadius);
+    const minRadius = 10;
+    nodes = nodes.map(d => {
+      if (d.r < minRadius) {
+        d.r = minRadius;
+      }
+      return d;
+    });
 
     // Remove any existing nodes
     container.selectAll('div.node').remove();
@@ -42,12 +47,12 @@ const EnclosureDisplay = ({ info, width, height, navigateToDirectory }) => {
       .style('height', d => `${2 * d.r}px`)
       .html(d => {
         // Show icon for small circles and name for larger ones
-        return d.r < 50 
+        return d.r < 50
           ? d.children ? '📁' : '📄' // Folder or file icon based on hierarchy
           : `${d.data.name}`; // Show name if the circle is large enough
       })
       .on("click", (event, d) => {
-        navigateToDirectory(d.data.name);
+        navigateToDirectory(d.data);
         // Add onClick effect: change background color
         d3.select(event.currentTarget)
           .style('background-color', 'lightblue');

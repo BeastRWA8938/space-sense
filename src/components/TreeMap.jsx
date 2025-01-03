@@ -25,8 +25,8 @@ const TreeMap = ({ info, width, height, navigateToDirectory }) => {
     const nodes = root.leaves();
 
     // Define minimum dimensions
-    const minWidth = 20;
-    const minHeight = 20;
+    const minWidth = 0;
+    const minHeight = 0;
 
     // Remove any existing nodes
     container.selectAll('div.treemap-node').remove();
@@ -43,8 +43,7 @@ const TreeMap = ({ info, width, height, navigateToDirectory }) => {
       .style("height", d => `${d.y1 - d.y0}px`)
       .on("click", (event, d) => {
         // Pass the name to navigateToDirectory when a node is clicked
-        alert(`clicked on ${d.data.name}`);
-        navigateToDirectory(d.data.name);
+        navigateToDirectory(d.data);
       })
       .append("div")
       .attr("class", "treemap-content")
