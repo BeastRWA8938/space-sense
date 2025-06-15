@@ -4,7 +4,7 @@ const fs = require('fs').promises;
 const path = require('path');
 
 // Recursion depth limit for safety
-const MAX_RECURSION_DEPTH = 50;
+const MAX_RECURSION_DEPTH = 10;
 
 // Function to convert bytes to human-readable format
 function formatBytes(bytes) {

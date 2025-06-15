@@ -3,7 +3,7 @@ import LeftNavPanel from './components/LeftNavPanel';
 import RightMainPanel from './components/RightMainPanel';
 import {  DarkModeProvider } from './components/DarkModeProvider.jsx';
 import { ScanModeProvider } from './components/ScanModeProvider.jsx';
-import FolderScan from './components/FolderScan.jsx';
+// import FolderScan from './components/FolderScan.jsx';
 
 
 function App() {

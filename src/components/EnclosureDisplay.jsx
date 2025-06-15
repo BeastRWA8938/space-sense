@@ -1,10 +1,18 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import * as d3 from 'd3';
 import './EnclosureDisplay.css';
 
 const EnclosureDisplay = ({ info, width, height, navigateToDirectory }) => {
   const divRef = useRef();
-  const tooltipRef = useRef(); // Ref for the tooltip
+  const tooltipRef = useRef();
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
+
+  // Memoize the node selection handler
+  const handleNodeClick = useCallback((event, d) => {
+    event.preventDefault();
+    setSelectedNodeId(d.data.id || d.data.name);
+    navigateToDirectory(d.data);
+  }, [navigateToDirectory]);
 
   useEffect(() => {
     if (!info) return;
@@ -40,54 +48,58 @@ const EnclosureDisplay = ({ info, width, height, navigateToDirectory }) => {
       .data(nodes)
       .enter()
       .append('div')
-      .attr('class', d => d.children ? 'node parent-node' : 'node child-node')
+      .attr('class', d => {
+        const baseClass = d.children ? 'node parent-node' : 'node child-node';
+        const isSelected = d.data.id === selectedNodeId || d.data.name === selectedNodeId;
+        return isSelected ? `${baseClass} selected` : baseClass;
+      })
       .style('left', d => `${d.x - d.r}px`)
       .style('top', d => `${d.y - d.r}px`)
       .style('width', d => `${2 * d.r}px`)
       .style('height', d => `${2 * d.r}px`)
       .html(d => {
-        // Show icon for small circles and name for larger ones, skip root node
-        if (d.depth === 0) {
-          return ''; // Skip root node
-        }
+        if (d.depth === 0) return '';
         const icon = d.data.isDirectory ? '📁' : '📄';
         return d.r < 50
           ? icon
-          : `<div class="node-text">${icon} ${d.data.name}</div>`; // Show icon and name if the circle is large enough
+          : `<div class="node-text">${icon} ${d.data.name}</div>`;
       })
-      .on("click", (event, d) => {
-        navigateToDirectory(d.data);
-        // Add onClick effect: change background color
-        d3.select(event.currentTarget)
-          .style('background-color', 'lightblue');
-      })
+      .on("click", handleNodeClick)
       .on("mouseover", (event, d) => {
-        // Show tooltip on hover
         const tooltip = d3.select(tooltipRef.current);
         tooltip
           .style('visibility', 'visible')
-          .html(`Name: ${d.data.name}<br>Size: ${d.data.size} ${d.data.sizeType}`)
-          .style('left', `${event.pageX + 10}px`) // Offset tooltip by 10px right
-          .style('top', `${event.pageY + 10}px`);  // Offset tooltip by 10px down
+          .html(`
+            <div class="tooltip-content">
+              <div class="tooltip-name">${d.data.name}</div>
+              <div class="tooltip-size">${d.data.size} ${d.data.sizeType}</div>
+            </div>
+          `)
+          .style('left', `${event.pageX + 10}px`)
+          .style('top', `${event.pageY + 10}px`);
       })
       .on("mousemove", (event) => {
-        // Update tooltip position on mouse move
         d3.select(tooltipRef.current)
           .style('left', `${event.pageX + 10}px`)
           .style('top', `${event.pageY + 10}px`);
       })
       .on("mouseout", () => {
-        // Hide tooltip when not hovering
         d3.select(tooltipRef.current).style('visibility', 'hidden');
       });
 
-  }, [info, width, height, navigateToDirectory]);
+  }, [info, width, height, navigateToDirectory, selectedNodeId, handleNodeClick]);
 
   return (
     <div>
       <div ref={divRef} />
-      {/* Tooltip div always present but hidden until hover */}
-      <div ref={tooltipRef} className="tooltip" style={{ position: 'absolute', visibility: 'hidden', backgroundColor: 'rgba(255, 255, 255, 0.8)', border: '1px solid #ccc', borderRadius: '4px', padding: '5px', pointerEvents: 'none' }}></div>
+      <div 
+        ref={tooltipRef} 
+        className="tooltip" 
+        style={{ 
+          position: 'absolute', 
+          visibility: 'hidden'
+        }}
+      />
     </div>
   );
 };
