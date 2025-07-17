@@ -9,9 +9,10 @@
   transition: transform 0.2s, background-color 0.2s;
 }
 
-.treemap-node:hover {
-  background-color: var(--accent-color);
+.treemap-node:hover, .treemap-node.selected {
+  background-color: var(--30-color);
   border-color: var(--accent-color);
+  transform: scale(1.05);
 }
 
 .treemap-content {
@@ -27,9 +28,36 @@
 .tooltip {
   position: absolute;
   visibility: hidden;
-  color: var(--30-color);
-  border: 1px solid #ccc;
+  background-color: var(--30-color);
+  color: var(--normal-color);
+  border: 1px solid var(--accent-color);
   border-radius: 4px;
-  padding: 5px;
+  padding: 8px 12px;
   pointer-events: none;
+  z-index: 1000;
+  font-size: 14px;
+  line-height: 1.4;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tooltip-name {
+  font-weight: bold;
+  color: var(--normal-color);
+  font-size: 14px;
+}
+
+.tooltip-size {
+  color: var(--accent-color);
+  font-size: 12px;
 }

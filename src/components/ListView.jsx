@@ -4,11 +4,12 @@ import './ListView.css'; // Import the CSS file for styling
 const ListView = ({ data, navigateToDirectory }) => {
   return (
     <div className="list-view">
-      {console.log("rendering list view")}
       {data && data.length > 0 ? (
         <ul>
           {data.map((item, index) => (
-            <li key={index} className={item.isDirectory ? 'directory' : 'file'}>
+            <li key={index} className={item.isDirectory ? 'directory' : 'file'}
+                onClick={item.isDirectory ? () => navigateToDirectory(item) : undefined}
+                style={item.isDirectory ? { cursor: 'pointer' } : {}}>
               <span className="item-name">{item.name}</span>
               {<span className="item-size">{item.size} {item.sizeType}</span>}
             </li>

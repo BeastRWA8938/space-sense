@@ -47,14 +47,19 @@ const TreeMap = ({ info, width, height, navigateToDirectory }) => {
         const file = { name: d.data.name, isDirectory: d.data.isDirectory };
         navigateToDirectory(file);
       })
-      .on("mouseover", (event, d) => {
+      .on('mouseover', (event, d) => {
         // Show tooltip on hover
         const tooltip = d3.select(tooltipRef.current);
         tooltip
           .style('visibility', 'visible')
-          .html(`Name: ${d.data.name}<br>Size: ${d.data.size} ${d.data.sizeType}`)
-          .style('left', `${event.pageX + 10}px`) // Offset tooltip by 10px right
-          .style('top', `${event.pageY + 10}px`);  // Offset tooltip by 10px down
+          .html(`
+            <div class="tooltip-content">
+              <div class="tooltip-name">${d.data.name}</div>
+              <div class="tooltip-size">${d.data.size} ${d.data.sizeType}</div>
+            </div>
+          `)
+          .style('left', `${event.pageX + 10}px`)
+          .style('top', `${event.pageY + 10}px`);
       })
       .on("mousemove", (event) => {
         // Update tooltip position on mouse move

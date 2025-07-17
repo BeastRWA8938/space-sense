@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import "./RightMainPanel.css";
 import TreeMap from './TreeMap';
 import EnclosureDisplay from './EnclosureDisplay';
@@ -11,56 +11,120 @@ import ListView from './ListView';
 const RightMainPanel = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeView, setActiveView] = useState(1);
-  const { nextPath, setNextPath , setCurrentPath, loading, isScanMode, setIsScanMode, data, setData, homePath, setHomePath, currentPath } = useContext(ScanModeContext);
+  const [userMessage, setUserMessage] = useState("");
+  const [prevPaths, setPrevPaths] = useState([]); // for back navigation
+  const [nextPaths, setNextPaths] = useState([]); // for redo navigation
+  const cacheRef = useRef({}); // path -> { path, files }
+  const { setCurrentPath, loading, isScanMode, setIsScanMode, data, setData, homePath, setHomePath, currentPath } = useContext(ScanModeContext);
+
+  // Clear cache on new scan
+  useEffect(() => {
+    if (isScanMode === 0 || isScanMode === 1) {
+      cacheRef.current = {};
+    }
+  }, [isScanMode]);
 
   useEffect(() => {
     if (data && data.length !== 0) {
       setIsScanMode(3);
     }
-    if (currentPath.length !== 0) {
-      setHomePath(currentPath);
-    }
+    // Removed setHomePath(currentPath) to prevent overwriting homePath on navigation
   }, [data]);
 
+  // Helper to fetch and set directory data with caching
+  const fetchDirectory = (path, pushToPrev = true) => {
+    if (!path) return;
+    // Check cache first
+    if (cacheRef.current[path]) {
+      const cached = cacheRef.current[path];
+      if (pushToPrev && currentPath && currentPath !== path) {
+        setPrevPaths(prev => [...prev, currentPath]);
+        setNextPaths([]);
+      }
+      setCurrentPath(cached.path);
+      setData(cached.files);
+      setUserMessage("");
+      return;
+    }
+    // Not cached, fetch from backend
+    window.electron.navigateDirectory(path)
+      .then((result) => {
+        if (result && result.path && Array.isArray(result.files)) {
+          cacheRef.current[result.path] = { path: result.path, files: result.files };
+          if (pushToPrev && currentPath && currentPath !== path) {
+            setPrevPaths(prev => [...prev, currentPath]);
+            setNextPaths([]); // Clear redo stack on new navigation
+          }
+          setCurrentPath(result.path);
+          setData(result.files);
+          setUserMessage("");
+        } else {
+          setUserMessage('Unexpected result format when navigating directory.');
+        }
+      })
+      .catch((err) => {
+        setUserMessage('Error navigating directory: ' + (err.message || err));
+      });
+  };
 
+  // Home button (key=0)
+  const handleHome = () => {
+    if (homePath && currentPath !== homePath) {
+      setPrevPaths(prev => [...prev, currentPath]);
+      setNextPaths([]);
+      fetchDirectory(homePath, false); // Don't push currentPath again
+    }
+  };
+
+  // Back button (key=1)
+  const handleBack = () => {
+    if (prevPaths.length > 0) {
+      const lastPath = prevPaths[prevPaths.length - 1];
+      setPrevPaths(prev => prev.slice(0, -1));
+      setNextPaths(next => [currentPath, ...next]);
+      fetchDirectory(lastPath, false); // Don't push currentPath again
+    } else {
+      setUserMessage('No previous folder.');
+    }
+  };
+
+  // Redo button (key=2)
+  const handleRedo = () => {
+    if (nextPaths.length > 0) {
+      const nextPath = nextPaths[0];
+      setNextPaths(next => next.slice(1));
+      setPrevPaths(prev => [...prev, currentPath]);
+      fetchDirectory(nextPath, false);
+    } else {
+      setUserMessage('No next folder.');
+    }
+  };
+
+  // View switcher (not navigation)
+  const handleSvgClick = (index) => {
+    setActiveView(index);
+  };
+
+  // Navigation buttons (home/back/redo)
+  const handleOpClick = (index) => {
+    setActiveIndex(index);
+    if (index === 3 || index === 0) {
+      handleHome();
+    }
+    if (index === 4 || index === 1) {
+      handleBack();
+    }
+    if (index === 5 || index === 2) {
+      handleRedo();
+    }
+    setActiveIndex(null);
+  };
+
+  // Directory navigation from UI (pushes to prevPaths)
   const navigateToDirectory = (file) => {
     if (file.isDirectory) {
       const newPath = `${currentPath}\\${file.name}`;
-      console.log('Navigating to:', newPath);
-      window.electron.navigateDirectory(newPath)
-        .then((result) => {
-          console.log('Result from navigateDirectory:', result);
-          if (result && result.path && Array.isArray(result.files)) {
-            setCurrentPath(result.path);
-            setData(result.files);
-            setNextPath([]); // Clear nextPath when navigating to a new directory
-          } else {
-            console.error('Unexpected result format:', result);
-          }
-        })
-        .catch((err) => {
-          console.error('Error navigating directory:', err);
-        });
-    }
-  };
-
-  const handleBackButton = (inputPath) => {
-    const lastSlashIndex = inputPath.lastIndexOf('\\');
-    
-    // Split the input into two parts
-    const newCurrentPath = inputPath.substring(0, lastSlashIndex);
-    const newNextPath = inputPath.substring(lastSlashIndex + 1);
-    
-    // Set new current and next paths
-    setCurrentPath(newCurrentPath);
-    setNextPath(prev => [...prev, newNextPath]); // Append the last part of the path to nextPath
-  };
-
-  const handleNavigateForward = () => {
-    if (nextPath.length > 0) {
-      const lastElement = nextPath[nextPath.length - 1];
-      setNextPath(prev => prev.slice(0, -1));
-      navigateToDirectory({ isDirectory: true, name: lastElement });
+      fetchDirectory(newPath, true);
     }
   };
 
@@ -96,35 +160,14 @@ const RightMainPanel = () => {
     </svg>
   ]
 
-  const handleSvgClick = (index) => {
-    setActiveView(index);
-  };
-
-  const handleOpClick = (index) => {
-    setActiveIndex(index);
-    if (index === 3) {
-      console.log("this is home path" , homePath)
-      setCurrentPath(homePath);
-    }
-    if (index === 4) {
-      handleBackButton();
-    }
-    if (index === 5) {
-      handleNavigateForward();
-    }
-    setTimeout(() => {
-      setActiveIndex(null);
-    }, 150);
-  };
-
-  console.log(activeIndex)
   return (
     <div className='RightMain'>
       <div className='top'>
         <div className='top-right bg-10'>{svgs2}</div>
-        <div className='top-left'>{homePath ? homePath : "Path"}</div>
+        <div className='top-left' title={homePath ? homePath : "Path"} style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: '400px'}}>{homePath ? homePath : "Path"}</div>
         <div className='top-right bg-10'>{svgs}</div>
       </div>
+      {userMessage && <div className='user-message' style={{color: 'red', padding: '5px', textAlign: 'center'}}>{userMessage}</div>}
       <div className='bottom center' id='Main-Display-Content'>
         {data && data.length === 0 && !loading ? (
           /* Case 1: No data, loading is false */

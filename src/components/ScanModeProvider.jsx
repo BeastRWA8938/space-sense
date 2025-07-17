@@ -6,7 +6,7 @@ const ScanModeProvider = ({ children }) => {
   const [nextPath, setNextPath] = useState([]);
   const [data, setData] = useState([]);
   const [currentPath, setCurrentPath] = useState("");
-  const [ selectedPath, setSelectedPath ] = useState(0);
+  const [ selectedPath, setSelectedPath ] = useState("");
   const [ loading, setLoading ] = useState(false)
   const [ homePath, setHomePath ] = useState("")
 
