@@ -5,7 +5,7 @@ import { ScanModeContext } from './ScanModeProvider';
 
 const LeftNavPanel = () => {
     const { isDarkMode, setIsDarkMode } = useContext(DarkModeContext);
-    const { setData , setIsScanMode, setLoading, setHomePath } = useContext(ScanModeContext);
+    const { setData , setIsScanMode, setLoading, setHomePath, setShowSettings } = useContext(ScanModeContext);
     const [activeIndex, setActiveIndex] = useState(null);
 
     const handleFullScanClick = () => {
@@ -43,7 +43,9 @@ const LeftNavPanel = () => {
           } else {
               console.error('window.electron is not defined');
           }
-        } 
+        } else if (index === 2) {
+          setShowSettings(true);
+        }
     };
 
     const svgs = [

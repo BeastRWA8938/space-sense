@@ -9,6 +9,10 @@ const TreeMap = ({ info, width, height, navigateToDirectory }) => {
   useEffect(() => {
     if (!info) return;
 
+    if (tooltipRef.current) {
+      d3.select(tooltipRef.current).style('visibility', 'hidden');
+    }
+
     const container = d3.select(ref.current)
       .style('position', 'relative')
       .style('width', `${width}px`)
@@ -50,6 +54,7 @@ const TreeMap = ({ info, width, height, navigateToDirectory }) => {
       .on('mouseover', (event, d) => {
         // Show tooltip on hover
         const tooltip = d3.select(tooltipRef.current);
+        const [x, y] = d3.pointer(event, ref.current);
         tooltip
           .style('visibility', 'visible')
           .html(`
@@ -58,14 +63,15 @@ const TreeMap = ({ info, width, height, navigateToDirectory }) => {
               <div class="tooltip-size">${d.data.size} ${d.data.sizeType}</div>
             </div>
           `)
-          .style('left', `${event.pageX + 10}px`)
-          .style('top', `${event.pageY + 10}px`);
+          .style('left', `${x + 10}px`)
+          .style('top', `${y + 10}px`);
       })
       .on("mousemove", (event) => {
         // Update tooltip position on mouse move
+        const [x, y] = d3.pointer(event, ref.current);
         d3.select(tooltipRef.current)
-          .style('left', `${event.pageX + 10}px`)
-          .style('top', `${event.pageY + 10}px`);
+          .style('left', `${x + 10}px`)
+          .style('top', `${y + 10}px`);
       })
       .on("mouseout", () => {
         // Hide tooltip when not hovering
@@ -78,13 +84,20 @@ const TreeMap = ({ info, width, height, navigateToDirectory }) => {
         return `${icon} ${d.data.name}`;
       });
 
+    const tooltipEl = tooltipRef.current;
+    return () => {
+      if (tooltipEl) {
+        d3.select(tooltipEl).style('visibility', 'hidden');
+      }
+    };
+
   }, [info, width, height, navigateToDirectory]);
 
   return (
     <div>
       <div ref={ref} />
       {/* Tooltip div always present but hidden until hover */}
-      <div ref={tooltipRef} className="tooltip" style={{ position: 'absolute', visibility: 'hidden', backgroundColor: 'rgba(255, 255, 255, 0.8)', border: '1px solid #ccc', borderRadius: '4px', padding: '5px', pointerEvents: 'none' }}></div>
+      <div ref={tooltipRef} className="tooltip"></div>
     </div>
   );
 };

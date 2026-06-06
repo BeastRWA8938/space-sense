@@ -1,0 +1,260 @@
+.settings-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.settings-modal {
+  background: var(--30-color);
+  border: 1px solid var(--accent-color);
+  border-radius: 12px;
+  width: 550px;
+  max-width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  color: var(--normal-color);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.settings-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--60-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.settings-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--normal-color);
+  font-size: 1.8rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.close-btn:hover {
+  opacity: 1;
+}
+
+.settings-loading {
+  padding: 40px;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.settings-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.section-desc {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.depth-slider-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 5px;
+}
+
+.slider {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--60-color);
+  outline: none;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  cursor: pointer;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.depth-value {
+  font-weight: bold;
+  font-size: 0.95rem;
+  min-width: 80px;
+}
+
+.ignore-chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  background: var(--60-color);
+  border-radius: 6px;
+  min-height: 50px;
+  align-content: flex-start;
+}
+
+.ignore-chip {
+  background: var(--30-color);
+  border: 1px solid var(--accent-color);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.remove-chip-btn {
+  background: none;
+  border: none;
+  color: var(--normal-color);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0;
+  opacity: 0.6;
+  line-height: 1;
+  transition: opacity 0.2s;
+}
+
+.remove-chip-btn:hover {
+  opacity: 1;
+}
+
+.no-items {
+  font-size: 0.85rem;
+  opacity: 0.6;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.add-ignore-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.settings-input {
+  flex: 1;
+  background: var(--60-color);
+  border: 1px solid transparent;
+  color: var(--normal-color);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.settings-input:focus {
+  border-color: var(--accent-color);
+}
+
+.add-btn {
+  background: var(--accent-color);
+  color: var(--normal-color);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: filter 0.2s;
+}
+
+.add-btn:hover {
+  filter: brightness(1.1);
+}
+
+.settings-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--60-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.settings-btn {
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem;
+  border: none;
+  transition: filter 0.2s;
+}
+
+.cancel-btn {
+  background: var(--60-color);
+  color: var(--normal-color);
+}
+
+.save-btn {
+  background: var(--accent-color);
+  color: var(--normal-color);
+}
+
+.settings-btn:hover {
+  filter: brightness(1.1);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

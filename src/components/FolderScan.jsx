@@ -14,19 +14,21 @@ const FolderScan = () => {
     selectedPath,
     setSelectedPath,
     setLoading,
+    setUserMessage,
   } = useContext(ScanModeContext);
 
   // Function to open directory and update selectedPath and data
   const openDirectory = async () => {
+    if (!window.electron) {
+      // Mock folder select for browser preview
+      setSelectedPath('C:\\Mock\\ProjectDir');
+      return;
+    }
     try {
       const result = await window.electron.openDirectory();
       if (result.path) {
         console.log("Selected Path:", result.path);
         setSelectedPath(result.path);
-      }
-      if (result.files) {
-        console.log("Files in Directory:", result.files);
-        setData(result.files);
       }
     } catch (error) {
       console.error('Error opening directory:', error);
@@ -46,12 +48,30 @@ const FolderScan = () => {
   // Function to start scanning the selected directory
   const startScanning = async (selectedPath) => {
     if (!selectedPath || typeof selectedPath !== 'string') {
-      console.error('Invalid selected path:', selectedPath);
+      setUserMessage('Invalid selected path.');
       setLoading(false);
       return;
     }
 
     setLoading(true);
+    setUserMessage("");
+    if (!window.electron) {
+      // Mock scanning for browser preview
+      setCurrentPath(selectedPath);
+      setHomePath(selectedPath);
+      setIsScanMode(3);
+      setTimeout(() => {
+        setData([
+          { name: 'src', size: '4.5', sizeType: 'MB', isDirectory: true, value: 50 },
+          { name: 'public', size: '2.1', sizeType: 'MB', isDirectory: true, value: 25 },
+          { name: 'package.json', size: '2.1', sizeType: 'KB', isDirectory: false, value: 10 },
+          { name: 'README.md', size: '4.0', sizeType: 'KB', isDirectory: false, value: 15 }
+        ]);
+        setLoading(false);
+      }, 1000);
+      return;
+    }
+
     try {
       const result = await window.electron.getInitialDirectory(selectedPath);
       if (result && result.path && Array.isArray(result.files)) {
@@ -59,10 +79,10 @@ const FolderScan = () => {
         setCurrentPath(result.path);
         setData(result.files);
       } else {
-        console.error('Unexpected result format:', result);
+        setUserMessage('Unexpected scan result format.');
       }
     } catch (err) {
-      console.error('Error fetching initial directory:', err);
+      setUserMessage('Failed to scan directory: ' + (err.message || err));
     } finally {
       setLoading(false);
     }

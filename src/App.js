@@ -1,10 +1,9 @@
 import './App.css';
 import LeftNavPanel from './components/LeftNavPanel';
 import RightMainPanel from './components/RightMainPanel';
+import SettingsModal from './components/SettingsModal';
 import {  DarkModeProvider } from './components/DarkModeProvider.jsx';
 import { ScanModeProvider } from './components/ScanModeProvider.jsx';
-// import FolderScan from './components/FolderScan.jsx';
-
 
 function App() {
   return (
@@ -14,6 +13,7 @@ function App() {
         <ScanModeProvider>
           <LeftNavPanel/>
           <RightMainPanel/>
+          <SettingsModal/>
         </ScanModeProvider>
       </DarkModeProvider>
       </div>

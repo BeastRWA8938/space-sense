@@ -38,7 +38,7 @@ html {
 }
 
 body {
-    background-image: var(--60-color);
+    background-color: var(--60-color);
     color: var(--normal-color);
     font-family: "JetBrainsRegular";
 }

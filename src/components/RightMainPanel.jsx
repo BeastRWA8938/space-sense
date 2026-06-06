@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import "./RightMainPanel.css";
 import TreeMap from './TreeMap';
 import EnclosureDisplay from './EnclosureDisplay';
@@ -11,16 +11,34 @@ import ListView from './ListView';
 const RightMainPanel = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeView, setActiveView] = useState(1);
-  const [userMessage, setUserMessage] = useState("");
   const [prevPaths, setPrevPaths] = useState([]); // for back navigation
   const [nextPaths, setNextPaths] = useState([]); // for redo navigation
   const cacheRef = useRef({}); // path -> { path, files }
-  const { setCurrentPath, loading, isScanMode, setIsScanMode, data, setData, homePath, setHomePath, currentPath } = useContext(ScanModeContext);
+  const { setCurrentPath, loading, setLoading, isScanMode, setIsScanMode, data, setData, homePath, currentPath, userMessage, setUserMessage } = useContext(ScanModeContext);
 
-  // Clear cache on new scan
+  const [dimensions, setDimensions] = useState({ width: 1135, height: 653 });
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        const { width, height } = entry.contentRect;
+        if (width && height) {
+          setDimensions({ width, height });
+        }
+      }
+    });
+    resizeObserver.observe(containerRef.current);
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  // Clear cache and reset navigation history on new scan mode transitions
   useEffect(() => {
     if (isScanMode === 0 || isScanMode === 1) {
       cacheRef.current = {};
+      setPrevPaths([]);
+      setNextPaths([]);
     }
   }, [isScanMode]);
 
@@ -29,10 +47,10 @@ const RightMainPanel = () => {
       setIsScanMode(3);
     }
     // Removed setHomePath(currentPath) to prevent overwriting homePath on navigation
-  }, [data]);
+  }, [data, setIsScanMode]);
 
   // Helper to fetch and set directory data with caching
-  const fetchDirectory = (path, pushToPrev = true) => {
+  const fetchDirectory = useCallback((path, pushToPrev = true) => {
     if (!path) return;
     // Check cache first
     if (cacheRef.current[path]) {
@@ -47,6 +65,32 @@ const RightMainPanel = () => {
       return;
     }
     // Not cached, fetch from backend
+    setLoading(true);
+    if (!window.electron) {
+      // Provide mock directory navigation data for browser preview
+      setTimeout(() => {
+        const isWindows = path.includes('\\') || path.includes(':');
+        const sep = isWindows ? '\\' : '/';
+        const parts = path.split(sep).filter(Boolean);
+        const name = parts[parts.length - 1] || path;
+        
+        const mockFiles = [
+          { name: `SubFolderA_of_${name}`, size: '1.2', sizeType: 'GB', isDirectory: true, value: 50 },
+          { name: `SubFolderB_of_${name}`, size: '800.5', sizeType: 'MB', isDirectory: true, value: 30 },
+          { name: `file_in_${name}.txt`, size: '15.2', sizeType: 'KB', isDirectory: false, value: 20 }
+        ];
+        cacheRef.current[path] = { path, files: mockFiles };
+        if (pushToPrev && currentPath && currentPath !== path) {
+          setPrevPaths(prev => [...prev, currentPath]);
+          setNextPaths([]);
+        }
+        setCurrentPath(path);
+        setData(mockFiles);
+        setUserMessage("");
+        setLoading(false);
+      }, 500);
+      return;
+    }
     window.electron.navigateDirectory(path)
       .then((result) => {
         if (result && result.path && Array.isArray(result.files)) {
@@ -64,8 +108,11 @@ const RightMainPanel = () => {
       })
       .catch((err) => {
         setUserMessage('Error navigating directory: ' + (err.message || err));
+      })
+      .finally(() => {
+        setLoading(false);
       });
-  };
+  }, [currentPath, setCurrentPath, setData, setLoading, setUserMessage]);
 
   // Home button (key=0)
   const handleHome = () => {
@@ -121,12 +168,19 @@ const RightMainPanel = () => {
   };
 
   // Directory navigation from UI (pushes to prevPaths)
-  const navigateToDirectory = (file) => {
+  const navigateToDirectory = useCallback((file) => {
     if (file.isDirectory) {
-      const newPath = `${currentPath}\\${file.name}`;
+      let newPath;
+      if (window.electron && window.electron.joinPath) {
+        newPath = window.electron.joinPath(currentPath, file.name);
+      } else {
+        const isWindows = currentPath.includes('\\');
+        const sep = isWindows ? '\\' : '/';
+        newPath = currentPath.endsWith(sep) ? `${currentPath}${file.name}` : `${currentPath}${sep}${file.name}`;
+      }
       fetchDirectory(newPath, true);
     }
-  };
+  }, [currentPath, fetchDirectory]);
 
   const svgs = [
     <svg key={0} className={activeView === 0 ? "active-view" : ""} width="33" height="34" viewBox="0 0 33 34" fill="none" xmlns="http://www.w3.org/2000/svg" onClick={() => handleSvgClick(0)}>
@@ -164,36 +218,35 @@ const RightMainPanel = () => {
     <div className='RightMain'>
       <div className='top'>
         <div className='top-right bg-10'>{svgs2}</div>
-        <div className='top-left' title={homePath ? homePath : "Path"} style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: '400px'}}>{homePath ? homePath : "Path"}</div>
+        <div className='top-left' title={currentPath ? currentPath : "Path"} style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: '400px'}}>{currentPath ? currentPath : "Path"}</div>
         <div className='top-right bg-10'>{svgs}</div>
       </div>
       {userMessage && <div className='user-message' style={{color: 'red', padding: '5px', textAlign: 'center'}}>{userMessage}</div>}
-      <div className='bottom center' id='Main-Display-Content'>
-        {data && data.length === 0 && !loading ? (
-          /* Case 1: No data, loading is false */
+      <div className='bottom center' id='Main-Display-Content' ref={containerRef}>
+        {loading ? (
+          <Loading />
+        ) : data && data.length > 0 ? (
+          activeView === 0 ? (
+            <EnclosureDisplay info={{"name": "root","children": data}} navigateToDirectory={navigateToDirectory} width={dimensions.width} height={dimensions.height} />
+          ) : activeView === 1 ? (
+            <ListView data={data} navigateToDirectory={navigateToDirectory}/>
+          ) : activeView === 2 ? (
+            <TreeMap info={{"name": "root","children": data}} navigateToDirectory={navigateToDirectory} width={dimensions.width} height={dimensions.height} />
+          ) : (
+            <div>No View Capable</div>
+          )
+        ) : (
           isScanMode === 0 ? (
             <FullScan />
           ) : isScanMode === 1 ? (
             <FolderScan />
           ) : (
-            <div>No data available</div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '15px', color: 'var(--normal-color)' }}>
+              <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>No files or folders found</div>
+              <p style={{ opacity: 0.8, fontSize: '0.9rem' }}>The selected directory is empty or inaccessible due to permission limits.</p>
+              <div className='button-div width-fit pad5' style={{ cursor: 'pointer' }} onClick={() => setIsScanMode(1)}>Go Back</div>
+            </div>
           )
-        ) : data && data.length === 0 && loading ? (
-          /* Case 2: No data, loading is true */
-          <Loading />
-        ) : data && data.length >= 0 ? (
-          /* Case 3: Data exists, loading is false */
-          activeView === 0 ? (
-            <EnclosureDisplay info={{"name": "root","children": data}} navigateToDirectory={navigateToDirectory} width={1135} height={653} />
-          ) : activeView === 1 ? (
-            <ListView data={data} navigateToDirectory={navigateToDirectory}/>
-          ) : activeView === 2 ? (
-            <TreeMap info={{"name": "root","children": data}} navigateToDirectory={navigateToDirectory} width={1135} height={653} />
-          ) : (
-            <div>No View Capable</div>
-          )
-        ) : (
-          <Loading />
         )}
       </div>
     </div>

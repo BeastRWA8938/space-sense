@@ -1,29 +1,117 @@
-.fullscan-main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    gap: 10px;
-    width: fit-content;
+.fullscan-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  margin: 40px auto;
+  gap: 30px;
+  color: var(--normal-color);
+  font-family: "JetBrainsRegular";
 }
 
-.justify-start {
-    justify-content: start;
+.fullscan-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.justify-center {
-    justify-content: center;
+.fullscan-header p {
+  font-size: 0.95rem;
+  opacity: 0.8;
+  margin: 0;
 }
 
-.title {
-    font-family: "JetBrainsBold";
-    font-size: 32px;
+.drives-loading {
+  font-size: 1.1rem;
+  opacity: 0.8;
+  margin-top: 20px;
 }
 
-.width-fit {
-    width: fit-content;
+.drives-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
 }
 
-.pad5 {
-    padding: 5px;
+.drive-card {
+  background: var(--30-color);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.drive-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-color);
+}
+
+.drive-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.drive-letter {
+  font-size: 1.5rem;
+  font-family: "JetBrainsBold";
+}
+
+.drive-usage-text {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.drive-progress-bar-container {
+  background: var(--60-color);
+  height: 10px;
+  border-radius: 5px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.drive-progress-bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.5s ease-out;
+}
+
+.drive-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.drive-percent {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.scan-btn {
+  border: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 6px 16px;
+  background: var(--accent-color);
+  color: var(--normal-color);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.scan-btn:hover {
+  filter: brightness(1.1);
+}
+
+.no-drives {
+  text-align: center;
+  opacity: 0.6;
 }
